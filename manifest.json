@@ -1,0 +1,9 @@
+{
+  "name": "My Blog",
+  "short_name": "Blog",
+  "icons": [],
+  "theme_color": "#1c1c1c",
+  "background_color": "#1c1c1c",
+  "display": "standalone",
+  "start_url": "/"
+}

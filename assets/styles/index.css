@@ -1,0 +1,83 @@
+.header-anchor {
+  text-decoration: none!important;
+}
+
+h1 > a.header-anchor {
+  font-weight: 800;
+}
+
+h2 > a.header-anchor {
+  font-weight: 700;
+}
+
+/* Melhorias para tipografia serifada */
+body {
+  font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;
+  line-height: 1.6;
+  font-size: 1.125rem; /* Aumenta a fonte base para 18px */
+  color: #e5e5e5; /* Força cor branca para modo escuro */
+  /* Força sempre mostrar espaço da barra de scroll para evitar deslocamento */
+  overflow-y: scroll;
+}
+
+html {
+  /* Alternativa mais moderna - reserva espaço da barra de scroll */
+  scrollbar-gutter: stable;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  color: #ffffff; /* Títulos em branco */
+}
+
+p {
+  margin-bottom: 1rem;
+  font-size: 1.125rem; /* 18px */
+  color: #e5e5e5; /* Parágrafos em branco suave */
+}
+
+/* Menu de navegação */
+nav a {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 500;
+  color: #ffffff; /* Links do menu em branco */
+}
+
+nav a:hover {
+  color: #d1d5db; /* Cor hover mais suave */
+}
+
+/* Melhora a legibilidade em modo escuro */
+.dark {
+  color: #e5e5e5;
+}
+
+/* Estilos para os ícones sociais */
+nav svg {
+  transition: opacity 0.2s ease-in-out;
+}
+
+nav svg:hover {
+  opacity: 0.7;
+}
+
+/* Otimizações para a barra de capa */
+.blog-header-image {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-font-smoothing: subpixel-antialiased;
+  /* Otimizações anti-piscar adicionais */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-background-size: 100% auto;
+  background-size: 100% auto;
+  background-attachment: scroll;
+  /* Força compositing layer */
+  contain: layout paint;
+}
