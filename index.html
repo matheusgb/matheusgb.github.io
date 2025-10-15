@@ -13,10 +13,11 @@
 
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Precarregamento da imagem de capa para evitar piscar -->
+    <!-- Preload apenas básico -->
     <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp">
-    <link rel="dns-prefetch" href="/assets/">
-    <link rel="prefetch" href="/assets/img/top-img.webp">
+
+    <!-- Barba.js para transições SPA -->
+    <script src="https://unpkg.com/@barba/core"></script>
 
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link href="/assets/styles/tailwind.css" rel="stylesheet" />
@@ -24,14 +25,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+      /* Header image simples */
+      .blog-header-image {
+        background-image: url('/assets/img/top-img.webp');
+        background-size: 100% auto;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #2d3748;
+      }
+    </style>
+    
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
     </script>
   </head>
 
-  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
-    
+  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;" data-barba="wrapper">
+    <div data-barba="container" data-barba-namespace="page">
+      
 <div class="min-h-screen flex flex-col">
 
 <div class="w-full">
@@ -188,6 +202,30 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 </div>
 
+    </div>
+    
+    <script>
+      // Barba.js sem animações - só preserva a imagem
+      barba.init({
+        transitions: [{
+          name: 'instant',
+          leave() {
+            // Sem animação de saída
+          },
+          enter() {
+            // Sem animação de entrada
+          }
+        }],
+        views: [{
+          namespace: 'page',
+          afterEnter() {
+            // Reaplica configurações após navegação
+            document.documentElement.classList.add('dark');
+            console.log('Navegação via Barba.js - imagem preservada!');
+          }
+        }]
+      });
+    </script>
     
   </body>
 </html>
