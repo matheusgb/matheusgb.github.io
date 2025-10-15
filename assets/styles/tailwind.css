@@ -1214,10 +1214,6 @@ video {
   margin-right: 1.5rem;
 }
 
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
 .block {
   display: block;
 }
@@ -1355,14 +1351,6 @@ video {
 
 .pb-10 {
   padding-bottom: 2.5rem;
-}
-
-.pt-10 {
-  padding-top: 2.5rem;
-}
-
-.pb-1 {
-  padding-bottom: 0.25rem;
 }
 
 .text-right {

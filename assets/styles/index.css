@@ -62,6 +62,12 @@ nav svg:hover {
   opacity: 0.7;
 }
 
+/* Ajusta largura do conteúdo dos posts para usar toda a largura disponível */
+.prose {
+  max-width: none !important;
+  width: 100%;
+}
+
 /* Otimizações para a barra de capa */
 .blog-header-image {
   will-change: transform;
