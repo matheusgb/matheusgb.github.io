@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  	<meta name='viewport' content='width=device-width'>
+    <!-- Otimizações de rendering -->
+    <meta name="color-scheme" content="dark">
+    <meta name="format-detection" content="telephone=no">
+
+    <title>{{ site.title }}</title>
+    <meta name='description' content={{ site.description }}>
+    <meta name="theme-color" content="#1c1c1c"/>
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Precarregamento da imagem de capa para evitar piscar -->
+    <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp">
+    <link rel="dns-prefetch" href="/assets/">
+    <link rel="prefetch" href="/assets/img/top-img.webp">
+
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
+    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
+    <link href="/assets/styles/index.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+    <script>
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+    </script>
+  </head>
+
+  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
+    {{ content }}
+    
+  </body>
+</html>

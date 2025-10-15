@@ -1,62 +1,77 @@
-# Astro Starter Kit: Blog
+# Blog starter
 
-```sh
-npm create astro@latest -- --template blog
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a9b962b7-9df1-49db-9b40-e5fedbc8ba9e/deploy-status)](https://app.netlify.com/sites/eleventy-blog-starter/deploys)
+
+View the live demo [here](https://eleventy.rongying.co/), hosted on Netlify
+
+![homepage](blog-v2.png)
+![darkmode](blog-dark.png)
+
+## Aims
+
+A blog that still runs without javascript. Hence, no bundlers.
+
+## Features
+
+- Static Site Gen - Eleventy
+
+- Tailwind CSS v2.0 / Tailwind Typography / Dark Mode
+
+- Create excerpts using the `<!-- excerpt -->`
+
+- 404 page
+
+* Tags page to view posts related to tag
+
+  - Use of a `tagList` collection defined in `.eleventy.js`
+  - `/tags` - show all available tags (excluding all and posts) as buttons (`tags.md`)
+  - `/tags/tag-name` - shows all posts related to that tag (`tagList.md`)
+
+* Sitemap and Robots.txt
+
+  - Change site url in `_data/site.json`
+
+* Shortcode to handle images
+  - Add image under `src/assets/img/posts` and use the asset_img short code
+  - `{% asset_img 'filename' 'alt_text' %}` eg. `{% asset_img 'mailbox.jpg' 'mailbox' %}`
+
+- Draft posts using the `published` frontmatter
+
+* Posts pagination in `index.html`
+  - change the `size` frontmatter variable
+
+- ESLint
+
+* Bash script to create new post (based on YYYY and MM)
+
+```bash
+$ ./create new blog post
+Created new post at src/posts/2021/01/new-blog-post.md
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Running locally
 
-Features:
+Create your blogpost under `src/posts`. I like to have mine sorted by YY/MM.
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+Navigate to localhost:8080 after starting the server.
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+```
+npm start
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Deployment
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+[<img src="https://www.netlify.com/img/deploy/button.svg" />](https://app.netlify.com/start/deploy?repository=https://github.com/kohrongying/11ty-blog-starter)
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+On Netlify / Surge / Firebase hosting / etc hosting providers
 
-Any static assets, like images, can be placed in the `public/` directory.
+Build Command: `npm run build`
 
-## 🧞 Commands
+Output folder: `_site`
 
-All commands are run from the root of the project, from a terminal:
+<!--
+## Future Improvemeents
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+- [ ] Minification of assets
+- [ ] Make next/prev posts
+-->
