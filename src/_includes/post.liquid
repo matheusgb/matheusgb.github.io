@@ -4,21 +4,14 @@ layout: main
 
 {% include "nav.liquid" %}
 
-<p class="text-5xl md:text-6xl font-black pt-10 md:pt-30 pb-1 leading-tight">
-    {{ title}}
-</p>
-
-<div class="mb-4">
-    <em>{{ date | dateDisplay }}</em>
+<div class="py-4">
+  <p class="mb-1">
+    <span class="text-5xl md:text-6xl font-black text-white leading-tight">{{ title}}</span>
+  </p>
+  
+  <em class="text-base text-gray-300 block mb-4">{{ date | dateDisplay }}</em>
+  
+  <div class="prose prose-lg dark:prose-invert hover:prose-a:text-blue-500">
+    {{ content }}
+  </div>
 </div>
-
-<div class="mt-3 pb-10">
-  <!-- Tags removidas -->
-</div>
-
-<div class="prose prose-lg dark:prose-invert hover:prose-a:text-blue-500">
-  {{ content }}
-</div>
-
-<!-- Espaçamento igual ao que existe entre título e nav -->
-<div class="pb-4"></div>
