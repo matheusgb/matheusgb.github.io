@@ -1,6 +1,7 @@
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const markdownIt = require('markdown-it')
 const markdownItAnchor = require('markdown-it-anchor')
+const markdownItLinkAttributes = require('markdown-it-link-attributes')
 
 module.exports = function(eleventyConfig) {
   // Plugins
@@ -42,7 +43,14 @@ module.exports = function(eleventyConfig) {
     return Array.from(tagsSet).sort()
   })
 
-  const md = markdownIt({ html: true, linkify: true })
+  const md = markdownIt({ 
+    html: true, 
+    linkify: true,
+    typographer: true,
+    breaks: false,
+    xhtmlOut: false
+  })
+  
   md.use(markdownItAnchor, { 
     level: [1, 2], 
     permalink: markdownItAnchor.permalink.headerLink({ 
@@ -50,6 +58,18 @@ module.exports = function(eleventyConfig) {
       class: 'header-anchor',
     })
   })
+  
+  // Configura links externos para abrir em nova aba
+  md.use(markdownItLinkAttributes, {
+    matcher(href) {
+      return href.match(/^https?:\/\//)
+    },
+    attrs: {
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    }
+  })
+  
   eleventyConfig.setLibrary('md', md)
 
   // asset_img shortcode
@@ -60,6 +80,9 @@ module.exports = function(eleventyConfig) {
   return {
     dir: {
       input: 'src'
-    }
+    },
+    markdownTemplateEngine: 'liquid',
+    htmlTemplateEngine: 'liquid',
+    templateFormats: ['md', 'liquid', 'html']
   }
 }

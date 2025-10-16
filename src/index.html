@@ -1,6 +1,7 @@
 ---
 layout: default
 title: matheusgb
+description: Blog pessoal sobre desenvolvimento de software, arquitetura e engenharia. Buscando ser menos leigo que ontem.
 pagination:
   data: collections.posts
   size: 10
@@ -12,7 +13,7 @@ pagination:
 {% if post.data.published %}
 <div class="py-4">
   <p class="mb-1">
-    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-blue-400 leading-tight"><a href="{{ post.url }}">{{ post.data.title }}</a></span>
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="{{ post.url }}">{{ post.data.title }}</a></span>
   </p>
   <em class="text-base text-gray-300 block mb-4">{{ post.date | dateDisplay }}</em>
   <p class="text-lg text-white">{{ post.data.post_excerpt }}...</p>
@@ -28,7 +29,7 @@ pagination:
       {% endfor %}
     </div>
 
-    <a class="flex-none hover:underline font-semibold text-blue-700" href="{{ post.url }}">Leia essa postagem &rarr;</a>
+    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="{{ post.url }}">Leia essa postagem &rarr;</a>
   </div>
 
 </div>

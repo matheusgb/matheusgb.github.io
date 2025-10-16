@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <meta charset="utf-8">
   	<meta name='viewport' content='width=device-width'>
@@ -11,13 +11,42 @@
     <meta name='description' content={{ site.description }}>
     <meta name="theme-color" content="#1c1c1c"/>
 
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{% if title and date %}article{% else %}website{% endif %}">
+    <meta property="og:url" content="{{ site.url }}{{ page.url or '/' }}">
+    <meta property="og:title" content="{% if title and title != site.title %}{{ title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}">
+    <meta property="og:description" content="{% if post_excerpt %}{{ post_excerpt }}{% elsif description %}{{ description }}{% else %}{{ site.description }}{% endif %}">
+    <meta property="og:image" content="{{ site.url }}/assets/img/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="{{ site.title }}">
+    <meta property="og:locale" content="pt_BR">
+    {% if title and date %}
+    <meta property="article:author" content="{{ site.name }}">
+    <meta property="article:published_time" content="{{ date | date: '%Y-%m-%d' }}">
+    <meta property="article:section" content="Blog">
+    {% endif %}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ site.url }}{{ page.url or '/' }}">
+    <meta name="twitter:title" content="{% if title and title != site.title %}{{ title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}">
+    <meta name="twitter:description" content="{% if post_excerpt %}{{ post_excerpt }}{% elsif description %}{{ description }}{% else %}{{ site.description }}{% endif %}">
+    <meta name="twitter:image" content="{{ site.url }}/assets/img/og-image.png">
+    <meta name="twitter:creator" content="@matheusgb">
+    <meta name="twitter:site" content="@matheusgb">
+
+    <!-- Meta tags adicionais -->
+    <meta name="author" content="{{ site.name }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ site.url }}{{ page.url or '/' }}">
+
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Preload apenas básico -->
+    <!-- Precarregamento da imagem de capa para evitar piscar -->
     <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp">
-
-    <!-- Barba.js para transições SPA -->
-    <script src="https://unpkg.com/@barba/core"></script>
+    <link rel="dns-prefetch" href="/assets/">
+    <link rel="prefetch" href="/assets/img/top-img.webp">
 
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link href="/assets/styles/tailwind.css" rel="stylesheet" />
@@ -25,50 +54,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-    
-    <style>
-      /* Header image simples */
-      .blog-header-image {
-        background-image: url('/assets/img/top-img.webp');
-        background-size: 100% auto;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-color: #2d3748;
-      }
-    </style>
-    
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
+      
+      // Processa código inline
+      function processInlineCode() {
+        const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
+        
+        if (contentArea) {
+          const codeElements = contentArea.querySelectorAll('code:not(pre code)');
+          
+          codeElements.forEach((codeEl) => {
+            codeEl.classList.add('inline-code');
+            codeEl.style.setProperty('content', 'none', 'important');
+          });
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', processInlineCode);
     </script>
   </head>
 
-  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;" data-barba="wrapper">
-    <div data-barba="container" data-barba-namespace="page">
-      {{ content }}
-    </div>
-    
-    <script>
-      // Barba.js sem animações - só preserva a imagem
-      barba.init({
-        transitions: [{
-          name: 'instant',
-          leave() {
-            // Sem animação de saída
-          },
-          enter() {
-            // Sem animação de entrada
-          }
-        }],
-        views: [{
-          namespace: 'page',
-          afterEnter() {
-            // Reaplica configurações após navegação
-            document.documentElement.classList.add('dark');
-          }
-        }]
-      });
-    </script>
+  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
+    {{ content }}
     
   </body>
 </html>

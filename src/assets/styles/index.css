@@ -48,6 +48,36 @@ nav a:hover {
   color: #d1d5db; /* Cor hover mais suave */
 }
 
+/* Força todos os links a serem brancos */
+a {
+  color: #ffffff !important;
+  text-decoration: underline;
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: #d1d5db !important;
+  text-decoration: underline;
+}
+
+/* Links dentro de posts - força branco sempre */
+.prose a,
+.prose a:visited,
+.prose a:link {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+}
+
+.prose a:hover {
+  color: #d1d5db !important;
+  text-decoration: underline !important;
+}
+
+/* Remove qualquer cor azul do Tailwind */
+.prose a:not(.header-anchor) {
+  color: #ffffff !important;
+}
+
 /* Melhora a legibilidade em modo escuro */
 .dark {
   color: #e5e5e5;
@@ -66,6 +96,81 @@ nav svg:hover {
 .prose {
   max-width: none !important;
   width: 100%;
+}
+
+/* Código inline (crases `código`) */
+.inline-code {
+  background-color: #374151 !important;
+  color: #fbbf24 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-family: 'Courier New', Consolas, Monaco, monospace !important;
+  font-size: 0.9em !important;
+  font-weight: 500 !important;
+  border: 1px solid #4b5563 !important;
+}
+
+/* Remove qualquer pseudo-elemento que adicione crases */
+code:not(pre code)::before,
+code:not(pre code)::after,
+.inline-code::before,
+.inline-code::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Força que elementos code inline não tenham decoração de crases */
+.prose code:not(pre code)::before,
+.prose code:not(pre code)::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Garante que blocos de código não sejam afetados */
+pre code {
+  background-color: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+/* Quebra de links em mobile - evita overflow horizontal */
+a {
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+/* Para URLs muito longas, força quebra mais agressiva */
+.prose a[href^="http"],
+.prose a[href^="https://"] {
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Garante que o conteúdo não ultrapasse os limites da tela */
+.prose {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Melhora adicional para dispositivos pequenos */
+@media (max-width: 640px) {
+  .prose a {
+    word-break: break-all !important;
+    overflow-wrap: anywhere !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* Garante que nada ultrapasse a largura da tela */
+  body, html {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
 }
 
 /* Otimizações para a barra de capa */
