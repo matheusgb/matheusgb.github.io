@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <meta charset="utf-8">
   	<meta name='viewport' content='width=device-width'>
@@ -11,13 +11,38 @@
     <meta name='description' content=Buscando ser menos leigo que ontem>
     <meta name="theme-color" content="#1c1c1c"/>
 
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://matheusgb.github.iotrue">
+    <meta property="og:title" content="matheusgb">
+    <meta property="og:description" content="Blog pessoal sobre desenvolvimento de software, arquitetura e engenharia. Buscando ser menos leigo que ontem.">
+    <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="matheusgb">
+    <meta property="og:locale" content="pt_BR">
+    
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://matheusgb.github.iotrue">
+    <meta name="twitter:title" content="matheusgb">
+    <meta name="twitter:description" content="Blog pessoal sobre desenvolvimento de software, arquitetura e engenharia. Buscando ser menos leigo que ontem.">
+    <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta name="twitter:creator" content="@matheusgb">
+    <meta name="twitter:site" content="@matheusgb">
+
+    <!-- Meta tags adicionais -->
+    <meta name="author" content="Matheus Gomes">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://matheusgb.github.iotrue">
+
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Preload apenas básico -->
+    <!-- Precarregamento da imagem de capa para evitar piscar -->
     <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp">
-
-    <!-- Barba.js para transições SPA -->
-    <script src="https://unpkg.com/@barba/core"></script>
+    <link rel="dns-prefetch" href="/assets/">
+    <link rel="prefetch" href="/assets/img/top-img.webp">
 
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link href="/assets/styles/tailwind.css" rel="stylesheet" />
@@ -25,27 +50,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-    
-    <style>
-      /* Header image simples */
-      .blog-header-image {
-        background-image: url('/assets/img/top-img.webp');
-        background-size: 100% auto;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-color: #2d3748;
-      }
-    </style>
-    
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
+      
+      // Processa código inline
+      function processInlineCode() {
+        const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
+        
+        if (contentArea) {
+          const codeElements = contentArea.querySelectorAll('code:not(pre code)');
+          
+          codeElements.forEach((codeEl) => {
+            codeEl.classList.add('inline-code');
+            codeEl.style.setProperty('content', 'none', 'important');
+          });
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', processInlineCode);
     </script>
   </head>
 
-  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;" data-barba="wrapper">
-    <div data-barba="container" data-barba-namespace="page">
-      
+  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
+    
 <div class="min-h-screen flex flex-col">
 
 <div class="w-full">
@@ -73,7 +101,7 @@
   <ul class="flex justify-between items-center py-2 border-b-2 mb-6 text-lg text-white">
     <div class="flex">
       <li class="mr-6"><a href="/" class="hover:text-gray-300">Posts</a></li>
-      <li class="mr-6"><a href="/about" class="hover:text-gray-300">Sobre mim</a></li>
+      <li class="mr-6"><a href="/sobre-mim" class="hover:text-gray-300">Sobre mim</a></li>
     </div>
     <div class="flex items-center space-x-4">
       
@@ -103,11 +131,11 @@
 
 <div class="py-4">
   <p class="mb-1">
-    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-blue-400 leading-tight"><a href="/posts/2020/07/Flutter/">Flutter</a></span>
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-3/">Notas sobre sugestões - Parte 3</a></span>
   </p>
-  <em class="text-base text-gray-300 block mb-4">02-01-2025</em>
+  <em class="text-base text-gray-300 block mb-4">16-10-2025</em>
   <p class="text-lg text-white">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
 
 ...</p>
   
@@ -118,7 +146,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
       
     </div>
 
-    <a class="flex-none hover:underline font-semibold text-blue-700" href="/posts/2020/07/Flutter/">Leia essa postagem &rarr;</a>
+    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/notas-sobre-sugestoes-3/">Leia essa postagem &rarr;</a>
   </div>
 
 </div>
@@ -128,11 +156,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 <div class="py-4">
   <p class="mb-1">
-    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-blue-400 leading-tight"><a href="/posts/2020/07/Kotlin/">Kotlin</a></span>
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-2/">Notas sobre sugestões - Parte 2</a></span>
   </p>
-  <em class="text-base text-gray-300 block mb-4">01-07-2020</em>
+  <em class="text-base text-gray-300 block mb-4">11-10-2025</em>
   <p class="text-lg text-white">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 ...</p>
   
@@ -143,7 +171,57 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
       
     </div>
 
-    <a class="flex-none hover:underline font-semibold text-blue-700" href="/posts/2020/07/Kotlin/">Leia essa postagem &rarr;</a>
+    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/notas-sobre-sugestoes-2/">Leia essa postagem &rarr;</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="py-4">
+  <p class="mb-1">
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-1/">Notas sobre sugestões - Parte 1</a></span>
+  </p>
+  <em class="text-base text-gray-300 block mb-4">10-10-2025</em>
+  <p class="text-lg text-white">
+Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+
+...</p>
+  
+  <div class="flex justify-between items-center mt-4">
+    <div class="flex-1 pr-4">
+      
+        
+      
+    </div>
+
+    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/notas-sobre-sugestoes-1/">Leia essa postagem &rarr;</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="py-4">
+  <p class="mb-1">
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/inicio-da-jornada/">Início da jornada</a></span>
+  </p>
+  <em class="text-base text-gray-300 block mb-4">09-10-2025</em>
+  <p class="text-lg text-white">
+Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.
+
+...</p>
+  
+  <div class="flex justify-between items-center mt-4">
+    <div class="flex-1 pr-4">
+      
+        
+      
+    </div>
+
+    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/inicio-da-jornada/">Leia essa postagem &rarr;</a>
   </div>
 
 </div>
@@ -202,29 +280,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 </div>
 
-    </div>
-    
-    <script>
-      // Barba.js sem animações - só preserva a imagem
-      barba.init({
-        transitions: [{
-          name: 'instant',
-          leave() {
-            // Sem animação de saída
-          },
-          enter() {
-            // Sem animação de entrada
-          }
-        }],
-        views: [{
-          namespace: 'page',
-          afterEnter() {
-            // Reaplica configurações após navegação
-            document.documentElement.classList.add('dark');
-          }
-        }]
-      });
-    </script>
     
   </body>
 </html>

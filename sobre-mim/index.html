@@ -11,13 +11,38 @@
     <meta name='description' content=Buscando ser menos leigo que ontem>
     <meta name="theme-color" content="#1c1c1c"/>
 
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://matheusgb.github.iotrue">
+    <meta property="og:title" content="Matheus Gomes - matheusgb">
+    <meta property="og:description" content="Desenvolvedor de software com foco em back-end, Tech Lead na Taghos Tecnologia. Especialista em Go, Node.js, Python e arquitetura hexagonal.">
+    <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="matheusgb">
+    <meta property="og:locale" content="pt_BR">
+    
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://matheusgb.github.iotrue">
+    <meta name="twitter:title" content="Matheus Gomes - matheusgb">
+    <meta name="twitter:description" content="Desenvolvedor de software com foco em back-end, Tech Lead na Taghos Tecnologia. Especialista em Go, Node.js, Python e arquitetura hexagonal.">
+    <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta name="twitter:creator" content="@matheusgb">
+    <meta name="twitter:site" content="@matheusgb">
+
+    <!-- Meta tags adicionais -->
+    <meta name="author" content="Matheus Gomes">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://matheusgb.github.iotrue">
+
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Preload apenas básico -->
+    <!-- Precarregamento da imagem de capa para evitar piscar -->
     <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp">
-
-    <!-- Barba.js para transições SPA -->
-    <script src="https://unpkg.com/@barba/core"></script>
+    <link rel="dns-prefetch" href="/assets/">
+    <link rel="prefetch" href="/assets/img/top-img.webp">
 
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link href="/assets/styles/tailwind.css" rel="stylesheet" />
@@ -25,27 +50,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-    
-    <style>
-      /* Header image simples */
-      .blog-header-image {
-        background-image: url('/assets/img/top-img.webp');
-        background-size: 100% auto;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-color: #2d3748;
-      }
-    </style>
-    
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
+      
+      // Processa código inline
+      function processInlineCode() {
+        const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
+        
+        if (contentArea) {
+          const codeElements = contentArea.querySelectorAll('code:not(pre code)');
+          
+          codeElements.forEach((codeEl) => {
+            codeEl.classList.add('inline-code');
+            codeEl.style.setProperty('content', 'none', 'important');
+          });
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', processInlineCode);
     </script>
   </head>
 
-  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;" data-barba="wrapper">
-    <div data-barba="container" data-barba-namespace="page">
-      
+  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
+    
 <div class="min-h-screen flex flex-col">
 
 <div class="w-full">
@@ -66,14 +94,14 @@
 
   
 <p class="text-5xl md:text-6xl font-black pt-4 md:pt-8 pb-4 leading-tight">
- Em construção
+ Matheus Gomes
 </p>
   
 <nav>
   <ul class="flex justify-between items-center py-2 border-b-2 mb-6 text-lg text-white">
     <div class="flex">
       <li class="mr-6"><a href="/" class="hover:text-gray-300">Posts</a></li>
-      <li class="mr-6"><a href="/about" class="hover:text-gray-300">Sobre mim</a></li>
+      <li class="mr-6"><a href="/sobre-mim" class="hover:text-gray-300">Sobre mim</a></li>
     </div>
     <div class="flex items-center space-x-4">
       
@@ -98,36 +126,17 @@
   </ul>
 </nav>
 
-<p>Sobre mim</p>
+<p>Sou desenvolvedor de software com foco em back-end desde 2022 e atualmente atuo como <strong>Tech Lead na Taghos Tecnologia</strong>. Tenho experiência prática em todo o ciclo de vida de aplicações — da arquitetura à produção — com ênfase em desempenho, observabilidade e entrega de valor.</p>
+<p>Minha stack envolve <strong>Go, Node.js, Python e Vue</strong>, além de infraestrutura com <strong>Docker, Redis, RabbitMQ, CI/CD, MongoDB, ClickHouse e PostgreSQL</strong>. Trabalho com <strong>arquitetura hexagonal, testes automatizados e boas práticas de engenharia de software</strong>, sempre buscando clareza técnica e impacto real no negócio.</p>
+<p>Acredito em <strong>autonomia, aprendizado contínuo e código bem projetado</strong> como base para construir soluções escaláveis e times mais fortes.</p>
+<p>📍 Rio de Janeiro, Brasil<br>
+🔗 <a href="https://www.linkedin.com/in/matheusgb" target="_blank" rel="noopener noreferrer">LinkedIn</a> · <a href="https://github.com/matheusgb" target="_blank" rel="noopener noreferrer">GitHub</a></p>
 
 
 </main>
 
 </div>
 
-    </div>
-    
-    <script>
-      // Barba.js sem animações - só preserva a imagem
-      barba.init({
-        transitions: [{
-          name: 'instant',
-          leave() {
-            // Sem animação de saída
-          },
-          enter() {
-            // Sem animação de entrada
-          }
-        }],
-        views: [{
-          namespace: 'page',
-          afterEnter() {
-            // Reaplica configurações após navegação
-            document.documentElement.classList.add('dark');
-          }
-        }]
-      });
-    </script>
     
   </body>
 </html>

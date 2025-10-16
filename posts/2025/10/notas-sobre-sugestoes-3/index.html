@@ -12,22 +12,32 @@
     <meta name="theme-color" content="#1c1c1c"/>
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="article">
     <meta property="og:url" content="https://matheusgb.github.iotrue">
-    <meta property="og:title" content="404 - matheusgb">
-    <meta property="og:description" content="Buscando ser menos leigo que ontem">
+    <meta property="og:title" content="Notas sobre sugestões - Parte 3 - matheusgb">
+    <meta property="og:description" content="
+Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+
+">
     <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="matheusgb">
     <meta property="og:locale" content="pt_BR">
     
+    <meta property="article:author" content="Matheus Gomes">
+    <meta property="article:published_time" content="2025-10-15">
+    <meta property="article:section" content="Blog">
+    
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://matheusgb.github.iotrue">
-    <meta name="twitter:title" content="404 - matheusgb">
-    <meta name="twitter:description" content="Buscando ser menos leigo que ontem">
+    <meta name="twitter:title" content="Notas sobre sugestões - Parte 3 - matheusgb">
+    <meta name="twitter:description" content="
+Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+
+">
     <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
     <meta name="twitter:creator" content="@matheusgb">
     <meta name="twitter:site" content="@matheusgb">
@@ -93,10 +103,6 @@
 <main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
 
   
-<p class="text-5xl md:text-6xl font-black pt-4 md:pt-8 pb-4 leading-tight">
- 404
-</p>
-  
 <nav>
   <ul class="flex justify-between items-center py-2 border-b-2 mb-6 text-lg text-white">
     <div class="flex">
@@ -126,8 +132,32 @@
   </ul>
 </nav>
 
-<p>404</p>
+<div class="py-4">
+  <p class="mb-1">
+    <span class="text-5xl md:text-6xl font-black text-white leading-tight">Notas sobre sugestões - Parte 3</span>
+  </p>
+  
+  <em class="text-base text-gray-300 block mb-4">16-10-2025</em>
+  
+  <div class="prose prose-lg dark:prose-invert">
+    <p>Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.</p>
+<p><a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
+<h3>Retratação sobre <code>open()</code></h3>
+<p>Ao final da parte 2, eu disse:</p>
+<blockquote>
+<p>E <code>open()</code> já é uma função <code>POSIX</code> que consulta diretamente o kernel, reduzindo overhead da stdio e pulando o buffering, pegando o estado atual do arquivo <strong>sempre</strong>.</p>
+</blockquote>
+<p>Na verdade, essa parte do “pegando o estado atual do arquivo sempre” ficou errada, e foi um exagero 😅. Nenhuma chamada de sistema, nem mesmo <code>open()</code>, consegue garantir que o dado que ela retorna representa o estado atual absoluto do arquivo, porque “estado atual” é uma coisa que simplesmente não existe de forma global no sistema.</p>
+<p>Quando disse, eu estava pensando em “atual” no sentido de “sem o buffering da stdio”, mas acabei misturando as camadas. O <code>open()</code> realmente pula o buffer da stdio, mas ele ainda depende do kernel e do subsistema de arquivos, e esses, trabalham com caches, lockings e estruturas que não são sincronizadas instantaneamente entre processos e threads.</p>
+<p>Então, o máximo que o <code>open()</code> faz é pedir ao kernel uma visão consistente daquele instante dentro da linha do tempo do próprio processo. É uma leitura “localmente atual”, não “universalmente atual”. A partir do momento que ele coleta as informações, o mundo já mudou.</p>
+<p>No fundo, o erro foi confundir “reduzir camadas intermediárias” com “acessar o estado real do sistema”, quando, na prática, essa noção de “estado real” é fisicamente impossível de capturar.</p>
+<h3>Timestamps</h3>
+<p>Na minha versão, a cada ciclo do loop, eu só imprimia as linhas lidas, sem noção exata do instante em que foram coletadas. O timestamp dá granularidade e permite acompanhar o quão próximo do “tempo real” cada leitura está. Ao mesmo tempo, reforça a ideia de que estamos sempre lidando com uma aproximação: mesmo com timestamp nanosegundo, não temos a consistência absoluta.</p>
+<h3>Próximos passos</h3>
+<p>Agora é por mais a mão na massa. Estou <a href="https://github.com/matheusgb/readers/blob/master/statreader.c" target="_blank" rel="noopener noreferrer">criando um reader</a> que utiliza do <code>/proc/stat</code>, então irei diluir as sugestões do Sanchez nesse projeto.</p>
 
+  </div>
+</div>
 
 </main>
 
