@@ -8,6 +8,7 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
 <!-- excerpt -->
 
 Meu código: https://github.com/matheusgb/readers/blob/master/memreader.c
+
 Mudanças sugeridas: https://github.com/rnsanchez/readers/blob/master/memreader.c
 
 ### Retratação sobre `open()`
