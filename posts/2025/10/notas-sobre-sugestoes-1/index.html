@@ -141,7 +141,8 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   
   <div class="prose prose-lg dark:prose-invert">
     <p>Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.</p>
-<p><a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
+<p>Meu código: <a href="https://github.com/matheusgb/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/master/memreader.c</a>
+Mudanças sugeridas: <a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
 <h3>Entendendo e comparando o uso de static e volatile em <code>sig_atomic_t  stop</code>.</h3>
 <p><code>volatile</code>: A proposta inicial era lidar com sinais como <code>Ctrl+C</code> de forma segura, <s>mas a essa altura acho que nem faria sentido, tendo em vista que <code>Ctrl+C</code> interrompe o programa de qualquer forma</s>. A linha de raciocínio era indicar ao compilador que a variável poderia ser modificada “a qualquer momento”, então deveria ser lida antes de qualquer operação, evitando um possível efeito colateral de otimização onde o loop poderia nunca perceber a mudança feita pelo handler de sinal e rodar infinito.
 s
