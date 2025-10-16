@@ -7,7 +7,8 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 <!-- excerpt -->
 
-https://github.com/rnsanchez/readers/blob/master/memreader.c
+Meu código: https://github.com/matheusgb/readers/blob/master/memreader.c
+Mudanças sugeridas: https://github.com/rnsanchez/readers/blob/master/memreader.c
 
 ### Conhecendo um pouco sobre `ELF` e seções de memória `.BSS`, `.DATA` e `.RODATA`
 

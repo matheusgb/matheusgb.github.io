@@ -8,7 +8,8 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 <!-- excerpt -->
 
-https://github.com/rnsanchez/readers/blob/master/memreader.c
+Meu código: https://github.com/matheusgb/readers/blob/master/memreader.c
+Mudanças sugeridas: https://github.com/rnsanchez/readers/blob/master/memreader.c
 
 ### Entendendo e comparando o uso de static e volatile em `sig_atomic_t  stop`.
 
