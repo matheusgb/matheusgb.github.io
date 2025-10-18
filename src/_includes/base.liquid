@@ -7,6 +7,10 @@
     <meta name="color-scheme" content="dark">
     <meta name="format-detection" content="telephone=no">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/img/blog.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/img/blog.png">
+
     <title>{{ site.title }}</title>
     <meta name='description' content={{ site.description }}>
     <meta name="theme-color" content="#1c1c1c"/>
@@ -93,7 +97,6 @@
             origin = referrerUrl.pathname;
           }
           
-          console.log('Origin detected:', origin); // Debug
           
           if (origin === '/' || origin === '/index.html') {
             backLink.href = '/';
@@ -129,7 +132,6 @@
             leave(data) {
               // Armazena a página atual antes de sair
               sessionStorage.setItem('previousPage', data.current.url.path);
-              console.log('Storing previous page:', data.current.url.path); // Debug
               
               // Sem transição - instantâneo
               return Promise.resolve();
@@ -145,7 +147,6 @@
           }]
         });
         
-        console.log('Barba.js initialized successfully'); // Debug
       });
     </script>
   </head>
