@@ -1,6 +1,6 @@
 ---
 layout: default
-title: matheusgb
+title: 滴水穿石
 description: Blog pessoal sobre desenvolvimento de software, arquitetura e engenharia. Buscando ser menos leigo que ontem.
 pagination:
   data: collections.posts
@@ -11,15 +11,15 @@ pagination:
 
 {% for post in pagination.items %}
 {% if post.data.published %}
-<div class="py-4">
+<div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
     <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="{{ post.url }}">{{ post.data.title }}</a></span>
   </p>
   <em class="text-base text-gray-300 block mb-4">{{ post.date | dateDisplay }}</em>
-  <p class="text-lg text-white">{{ post.data.post_excerpt }}...</p>
+  <p class="text-lg text-white">{{ post.data.post_excerpt }}</p>
   
-  <div class="flex justify-between items-center mt-4">
-    <div class="flex-1 pr-4">
+  <div class="mt-4">
+    <div class="flex flex-wrap">
       {% for tag in post.data.tags %}
         {% if tag != "posts" %}
           <a href="/topicos/{{ tag | downcase }}" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
@@ -28,8 +28,6 @@ pagination:
         {% endif %}
       {% endfor %}
     </div>
-
-    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="{{ post.url }}">Leia essa postagem &rarr;</a>
   </div>
 
 </div>

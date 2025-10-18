@@ -13,7 +13,7 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{% if title and date %}article{% else %}website{% endif %}">
-    <meta property="og:url" content="{{ site.url }}{{ page.url or '/' }}">
+    <meta property="og:url" content="{{ site.url }}{% if page.url %}{{ page.url }}{% else %}/{% endif %}">
     <meta property="og:title" content="{% if title and title != site.title %}{{ title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}">
     <meta property="og:description" content="{% if post_excerpt %}{{ post_excerpt }}{% elsif description %}{{ description }}{% else %}{{ site.description }}{% endif %}">
     <meta property="og:image" content="{{ site.url }}/assets/img/og-image.png">
@@ -29,7 +29,7 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ site.url }}{{ page.url or '/' }}">
+    <meta name="twitter:url" content="{{ site.url }}{% if page.url %}{{ page.url }}{% else %}/{% endif %}">
     <meta name="twitter:title" content="{% if title and title != site.title %}{{ title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}">
     <meta name="twitter:description" content="{% if post_excerpt %}{{ post_excerpt }}{% elsif description %}{{ description }}{% else %}{{ site.description }}{% endif %}">
     <meta name="twitter:image" content="{{ site.url }}/assets/img/og-image.png">
@@ -39,7 +39,7 @@
     <!-- Meta tags adicionais -->
     <meta name="author" content="{{ site.name }}">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ site.url }}{{ page.url or '/' }}">
+    <link rel="canonical" href="{{ site.url }}{% if page.url %}{{ page.url }}{% else %}/{% endif %}">
 
     <link rel="manifest" href="/manifest.json" />
 
@@ -53,7 +53,6 @@
     <link href="/assets/styles/index.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
@@ -74,10 +73,104 @@
       
       document.addEventListener('DOMContentLoaded', processInlineCode);
     </script>
+    
+    <!-- Barba.js para navegação SPA -->
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script>
+      // Função para configurar link de volta
+      function setupBackLink() {
+        const backLink = document.getElementById('back-link');
+        if (backLink) {
+          const previousPage = sessionStorage.getItem('previousPage');
+          const referrer = document.referrer;
+          
+          // Prioriza sessionStorage (navegação via Barba.js)
+          let origin = previousPage;
+          
+          // Se não há sessionStorage, usa referrer (primeiro acesso)
+          if (!origin && referrer) {
+            const referrerUrl = new URL(referrer);
+            origin = referrerUrl.pathname;
+          }
+          
+          console.log('Origin detected:', origin); // Debug
+          
+          if (origin === '/' || origin === '/index.html') {
+            backLink.href = '/';
+            backLink.innerHTML = '← Voltar para Posts';
+          } else if (origin === '/topicos' || origin === '/topicos/') {
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          } else {
+            // Padrão se não conseguir detectar
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          }
+        }
+      }
+      
+      // Inicialização após DOM estar pronto
+      document.addEventListener('DOMContentLoaded', function() {
+        // Configura link de volta na primeira carga
+        setupBackLink();
+        
+        // Inicializa Barba.js
+        barba.init({
+          // Configuração mais robusta para interceptar links
+          prevent: ({ el }) => {
+            // Não intercepta links externos ou com target="_blank"
+            return el.getAttribute('target') === '_blank' || 
+                   el.getAttribute('href').startsWith('http') ||
+                   el.getAttribute('href').startsWith('mailto:');
+          },
+          
+          transitions: [{
+            name: 'instant-transition',
+            leave(data) {
+              // Armazena a página atual antes de sair
+              sessionStorage.setItem('previousPage', data.current.url.path);
+              console.log('Storing previous page:', data.current.url.path); // Debug
+              
+              // Sem transição - instantâneo
+              return Promise.resolve();
+            },
+            enter(data) {
+              // Processamento imediato sem delays
+              processInlineCode();
+              setupBackLink();
+              
+              // Resolve instantaneamente
+              return Promise.resolve();
+            }
+          }]
+        });
+        
+        console.log('Barba.js initialized successfully'); // Debug
+      });
+    </script>
   </head>
 
   <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
-    {{ content }}
+    <!-- Imagem do topo - fora do Barba container para não piscar -->
+    <div class="w-full">
+      <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+        <div class="bg-no-repeat blog-header-image" 
+             style="height: 123px; 
+                    background-image: url('/assets/img/top-img.webp'); 
+                    background-color: #2d3748; 
+                    background-position: center; 
+                    background-size: 100% auto;
+                    opacity: 1;
+                    transition: opacity 0.1s ease-out;">
+        </div>
+      </div>
+    </div>
+    
+    <div data-barba="wrapper">
+      <div data-barba="container">
+        {{ content }}
+      </div>
+    </div>
     
   </body>
 </html>
