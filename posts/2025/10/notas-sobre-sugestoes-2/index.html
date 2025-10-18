@@ -13,7 +13,7 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://matheusgb.github.iotrue">
+    <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/">
     <meta property="og:title" content="Notas sobre sugestões - Parte 2 - matheusgb">
     <meta property="og:description" content="
 Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
@@ -32,7 +32,7 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://matheusgb.github.iotrue">
+    <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/">
     <meta name="twitter:title" content="Notas sobre sugestões - Parte 2 - matheusgb">
     <meta name="twitter:description" content="
 Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
@@ -45,7 +45,7 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
     <!-- Meta tags adicionais -->
     <meta name="author" content="Matheus Gomes">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://matheusgb.github.iotrue">
+    <link rel="canonical" href="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/">
 
     <link rel="manifest" href="/manifest.json" />
 
@@ -59,7 +59,6 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
     <link href="/assets/styles/index.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
@@ -80,25 +79,103 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
       
       document.addEventListener('DOMContentLoaded', processInlineCode);
     </script>
+    
+    <!-- Barba.js para navegação SPA -->
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script>
+      // Função para configurar link de volta
+      function setupBackLink() {
+        const backLink = document.getElementById('back-link');
+        if (backLink) {
+          const previousPage = sessionStorage.getItem('previousPage');
+          const referrer = document.referrer;
+          
+          // Prioriza sessionStorage (navegação via Barba.js)
+          let origin = previousPage;
+          
+          // Se não há sessionStorage, usa referrer (primeiro acesso)
+          if (!origin && referrer) {
+            const referrerUrl = new URL(referrer);
+            origin = referrerUrl.pathname;
+          }
+          
+          console.log('Origin detected:', origin); // Debug
+          
+          if (origin === '/' || origin === '/index.html') {
+            backLink.href = '/';
+            backLink.innerHTML = '← Voltar para Posts';
+          } else if (origin === '/topicos' || origin === '/topicos/') {
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          } else {
+            // Padrão se não conseguir detectar
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          }
+        }
+      }
+      
+      // Inicialização após DOM estar pronto
+      document.addEventListener('DOMContentLoaded', function() {
+        // Configura link de volta na primeira carga
+        setupBackLink();
+        
+        // Inicializa Barba.js
+        barba.init({
+          // Configuração mais robusta para interceptar links
+          prevent: ({ el }) => {
+            // Não intercepta links externos ou com target="_blank"
+            return el.getAttribute('target') === '_blank' || 
+                   el.getAttribute('href').startsWith('http') ||
+                   el.getAttribute('href').startsWith('mailto:');
+          },
+          
+          transitions: [{
+            name: 'instant-transition',
+            leave(data) {
+              // Armazena a página atual antes de sair
+              sessionStorage.setItem('previousPage', data.current.url.path);
+              console.log('Storing previous page:', data.current.url.path); // Debug
+              
+              // Sem transição - instantâneo
+              return Promise.resolve();
+            },
+            enter(data) {
+              // Processamento imediato sem delays
+              processInlineCode();
+              setupBackLink();
+              
+              // Resolve instantaneamente
+              return Promise.resolve();
+            }
+          }]
+        });
+        
+        console.log('Barba.js initialized successfully'); // Debug
+      });
+    </script>
   </head>
 
   <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
-    
-<div class="min-h-screen flex flex-col">
-
-<div class="w-full">
-  <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
-    <div class="bg-no-repeat blog-header-image" 
-         style="height: 123px; 
-                background-image: url('/assets/img/top-img.webp'); 
-                background-color: #2d3748; 
-                background-position: center; 
-                background-size: 100% auto;
-                opacity: 1;
-                transition: opacity 0.1s ease-out;">
+    <!-- Imagem do topo - fora do Barba container para não piscar -->
+    <div class="w-full">
+      <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+        <div class="bg-no-repeat blog-header-image" 
+             style="height: 123px; 
+                    background-image: url('/assets/img/top-img.webp'); 
+                    background-color: #2d3748; 
+                    background-position: center; 
+                    background-size: 100% auto;
+                    opacity: 1;
+                    transition: opacity 0.1s ease-out;">
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+    
+    <div data-barba="wrapper">
+      <div data-barba="container">
+        
+<div class="min-h-screen flex flex-col">
 
 <main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
 
@@ -317,6 +394,8 @@ Quando o programa recebe um sinal como <code>SIGINT</code>, o sono da thread é 
 
 </div>
 
+      </div>
+    </div>
     
   </body>
 </html>

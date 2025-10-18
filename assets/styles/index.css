@@ -10,9 +10,9 @@ h2 > a.header-anchor {
   font-weight: 700;
 }
 
-/* Melhorias para tipografia serifada */
+/* Melhorias para tipografia sans-serif com suporte ao chinês */
 body {
-  font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif !important;
   line-height: 1.6;
   font-size: 1.125rem; /* Aumenta a fonte base para 18px */
   color: #e5e5e5; /* Força cor branca para modo escuro */
@@ -26,7 +26,7 @@ html {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif !important;
   font-weight: 600;
   color: #ffffff; /* Títulos em branco */
 }
@@ -42,10 +42,12 @@ nav a {
   font-size: 1.125rem; /* 18px */
   font-weight: 500;
   color: #ffffff; /* Links do menu em branco */
+  text-decoration: none !important; /* Remove sublinhado da navegação */
 }
 
 nav a:hover {
   color: #d1d5db; /* Cor hover mais suave */
+  text-decoration: none !important; /* Remove sublinhado no hover */
 }
 
 /* Força todos os links a serem brancos */
@@ -60,7 +62,45 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Links dentro de posts - força branco sempre */
+/* Remove sublinhado de títulos de posts na página inicial */
+.text-2xl a,
+.text-3xl a,
+.text-4xl a,
+.font-bold a {
+  text-decoration: none !important;
+}
+
+.text-2xl a:hover,
+.text-3xl a:hover,
+.text-4xl a:hover,
+.font-bold a:hover {
+  text-decoration: none !important;
+}
+
+/* Remove sublinhado de botões "Leia essa postagem" */
+.font-semibold a {
+  text-decoration: none !important;
+}
+
+.font-semibold a:hover {
+  text-decoration: none !important;
+}
+
+/* Remove sublinhado de tags */
+.bg-gray-700 {
+  text-decoration: none !important;
+}
+
+/* Classe utilitária para remover sublinhado */
+.no-underline {
+  text-decoration: none !important;
+}
+
+.no-underline:hover {
+  text-decoration: none !important;
+}
+
+/* Links dentro de posts - força branco sempre com sublinhado */
 .prose a,
 .prose a:visited,
 .prose a:link {
@@ -191,4 +231,23 @@ a {
   background-attachment: scroll;
   /* Força compositing layer */
   contain: layout paint;
+}
+
+/* Botões de paginação */
+.paginator-text {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: transparent;
+  color: #ffffff;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.paginator-text:hover:not(.cursor-not-allowed) {
+  color: #d1d5db;
+}
+
+.paginator-text.cursor-not-allowed {
+  opacity: 0.5;
+  color: #6b7280;
 }

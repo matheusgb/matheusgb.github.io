@@ -13,8 +13,8 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://matheusgb.github.iotrue">
-    <meta property="og:title" content="matheusgb">
+    <meta property="og:url" content="https://matheusgb.github.io/">
+    <meta property="og:title" content="滴水穿石 - matheusgb">
     <meta property="og:description" content="Blog pessoal sobre desenvolvimento de software, arquitetura e engenharia. Buscando ser menos leigo que ontem.">
     <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
     <meta property="og:image:width" content="1200">
@@ -25,8 +25,8 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://matheusgb.github.iotrue">
-    <meta name="twitter:title" content="matheusgb">
+    <meta name="twitter:url" content="https://matheusgb.github.io/">
+    <meta name="twitter:title" content="滴水穿石 - matheusgb">
     <meta name="twitter:description" content="Blog pessoal sobre desenvolvimento de software, arquitetura e engenharia. Buscando ser menos leigo que ontem.">
     <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
     <meta name="twitter:creator" content="@matheusgb">
@@ -35,7 +35,7 @@
     <!-- Meta tags adicionais -->
     <meta name="author" content="Matheus Gomes">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://matheusgb.github.iotrue">
+    <link rel="canonical" href="https://matheusgb.github.io/">
 
     <link rel="manifest" href="/manifest.json" />
 
@@ -49,7 +49,6 @@
     <link href="/assets/styles/index.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
@@ -70,31 +69,109 @@
       
       document.addEventListener('DOMContentLoaded', processInlineCode);
     </script>
+    
+    <!-- Barba.js para navegação SPA -->
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script>
+      // Função para configurar link de volta
+      function setupBackLink() {
+        const backLink = document.getElementById('back-link');
+        if (backLink) {
+          const previousPage = sessionStorage.getItem('previousPage');
+          const referrer = document.referrer;
+          
+          // Prioriza sessionStorage (navegação via Barba.js)
+          let origin = previousPage;
+          
+          // Se não há sessionStorage, usa referrer (primeiro acesso)
+          if (!origin && referrer) {
+            const referrerUrl = new URL(referrer);
+            origin = referrerUrl.pathname;
+          }
+          
+          console.log('Origin detected:', origin); // Debug
+          
+          if (origin === '/' || origin === '/index.html') {
+            backLink.href = '/';
+            backLink.innerHTML = '← Voltar para Posts';
+          } else if (origin === '/topicos' || origin === '/topicos/') {
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          } else {
+            // Padrão se não conseguir detectar
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          }
+        }
+      }
+      
+      // Inicialização após DOM estar pronto
+      document.addEventListener('DOMContentLoaded', function() {
+        // Configura link de volta na primeira carga
+        setupBackLink();
+        
+        // Inicializa Barba.js
+        barba.init({
+          // Configuração mais robusta para interceptar links
+          prevent: ({ el }) => {
+            // Não intercepta links externos ou com target="_blank"
+            return el.getAttribute('target') === '_blank' || 
+                   el.getAttribute('href').startsWith('http') ||
+                   el.getAttribute('href').startsWith('mailto:');
+          },
+          
+          transitions: [{
+            name: 'instant-transition',
+            leave(data) {
+              // Armazena a página atual antes de sair
+              sessionStorage.setItem('previousPage', data.current.url.path);
+              console.log('Storing previous page:', data.current.url.path); // Debug
+              
+              // Sem transição - instantâneo
+              return Promise.resolve();
+            },
+            enter(data) {
+              // Processamento imediato sem delays
+              processInlineCode();
+              setupBackLink();
+              
+              // Resolve instantaneamente
+              return Promise.resolve();
+            }
+          }]
+        });
+        
+        console.log('Barba.js initialized successfully'); // Debug
+      });
+    </script>
   </head>
 
   <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
-    
-<div class="min-h-screen flex flex-col">
-
-<div class="w-full">
-  <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
-    <div class="bg-no-repeat blog-header-image" 
-         style="height: 123px; 
-                background-image: url('/assets/img/top-img.webp'); 
-                background-color: #2d3748; 
-                background-position: center; 
-                background-size: 100% auto;
-                opacity: 1;
-                transition: opacity 0.1s ease-out;">
+    <!-- Imagem do topo - fora do Barba container para não piscar -->
+    <div class="w-full">
+      <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+        <div class="bg-no-repeat blog-header-image" 
+             style="height: 123px; 
+                    background-image: url('/assets/img/top-img.webp'); 
+                    background-color: #2d3748; 
+                    background-position: center; 
+                    background-size: 100% auto;
+                    opacity: 1;
+                    transition: opacity 0.1s ease-out;">
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+    
+    <div data-barba="wrapper">
+      <div data-barba="container">
+        
+<div class="min-h-screen flex flex-col">
 
 <main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
 
   
 <p class="text-5xl md:text-6xl font-black pt-4 md:pt-8 pb-4 leading-tight">
- matheusgb
+ 滴水穿石
 </p>
   
 <nav>
@@ -130,7 +207,7 @@
 
 
 
-<div class="py-4">
+<div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
     <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-3/">Notas sobre sugestões - Parte 3</a></span>
   </p>
@@ -138,10 +215,10 @@
   <p class="text-lg text-white">
 Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
 
-...</p>
+</p>
   
-  <div class="flex justify-between items-center mt-4">
-    <div class="flex-1 pr-4">
+  <div class="mt-4">
+    <div class="flex flex-wrap">
       
         
       
@@ -152,8 +229,6 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
         
       
     </div>
-
-    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/notas-sobre-sugestoes-3/">Leia essa postagem &rarr;</a>
   </div>
 
 </div>
@@ -161,7 +236,7 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
 
 
 
-<div class="py-4">
+<div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
     <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-2/">Notas sobre sugestões - Parte 2</a></span>
   </p>
@@ -169,10 +244,10 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
   <p class="text-lg text-white">
 Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
-...</p>
+</p>
   
-  <div class="flex justify-between items-center mt-4">
-    <div class="flex-1 pr-4">
+  <div class="mt-4">
+    <div class="flex flex-wrap">
       
         
       
@@ -183,8 +258,6 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
         
       
     </div>
-
-    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/notas-sobre-sugestoes-2/">Leia essa postagem &rarr;</a>
   </div>
 
 </div>
@@ -192,7 +265,7 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 
 
-<div class="py-4">
+<div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
     <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-1/">Notas sobre sugestões - Parte 1</a></span>
   </p>
@@ -200,10 +273,10 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   <p class="text-lg text-white">
 Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
-...</p>
+</p>
   
-  <div class="flex justify-between items-center mt-4">
-    <div class="flex-1 pr-4">
+  <div class="mt-4">
+    <div class="flex flex-wrap">
       
         
       
@@ -214,8 +287,6 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
         
       
     </div>
-
-    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/notas-sobre-sugestoes-1/">Leia essa postagem &rarr;</a>
   </div>
 
 </div>
@@ -223,7 +294,7 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 
 
-<div class="py-4">
+<div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
     <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/inicio-da-jornada/">Início da jornada</a></span>
   </p>
@@ -231,16 +302,14 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   <p class="text-lg text-white">
 Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.
 
-...</p>
+</p>
   
-  <div class="flex justify-between items-center mt-4">
-    <div class="flex-1 pr-4">
+  <div class="mt-4">
+    <div class="flex flex-wrap">
       
         
       
     </div>
-
-    <a class="flex-none hover:underline font-semibold text-white hover:text-gray-300" href="/posts/2025/10/inicio-da-jornada/">Leia essa postagem &rarr;</a>
   </div>
 
 </div>
@@ -260,7 +329,7 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
 
       
         <button class="py-2 px-4 cursor-not-allowed">
-          <img src="/assets/img/chevron-left.svg" alt="prev">
+          <img src="/assets/img/chevron-left-disabled.svg" alt="prev">
         </button>
       
 
@@ -277,7 +346,7 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
 
       
         <button class="py-2 px-4 cursor-not-allowed">
-          <img src="/assets/img/chevron-right.svg" alt="next">
+          <img src="/assets/img/chevron-right-disabled.svg" alt="next">
         </button>
       
 
@@ -299,6 +368,8 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
 
 </div>
 
+      </div>
+    </div>
     
   </body>
 </html>
