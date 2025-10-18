@@ -1,0 +1,52 @@
+---
+pagination:
+  data: collections.tagList
+  size: 1
+  alias: tag
+permalink: "/topicos/{{ tag | downcase }}/"
+layout: default
+---
+
+# Posts sobre: {{ tag | capitalize }}
+
+<div class="mb-6">
+  <a href="/topicos" class="text-white hover:text-gray-300">← Voltar para Tópicos</a>
+</div>
+
+{% assign posts = collections[tag] %}
+{% for post in posts reversed %}
+  {% if post.data.published != false %}
+    <div class="py-4 border-b border-gray-700">
+      <p class="mb-1">
+        <span class="text-2xl sm:text-3xl font-bold text-white leading-tight">
+          <a href="{{ post.url }}" class="hover:text-gray-300">{{ post.data.title }}</a>
+        </span>
+      </p>
+      <em class="text-base text-gray-300 block mb-3">{{ post.date | dateDisplay }}</em>
+      {% if post.data.post_excerpt %}
+        <p class="text-lg text-gray-200 mb-3">{{ post.data.post_excerpt }}...</p>
+      {% endif %}
+      
+      {% if post.data.tags %}
+        <div class="flex flex-wrap gap-2 mb-3">
+          {% for postTag in post.data.tags %}
+            {% unless postTag == "posts" %}
+              <a href="/topicos/{{ postTag | downcase }}" 
+                 class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors">
+                {{ postTag }}
+              </a>
+            {% endunless %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <a class="text-white hover:text-gray-300 font-semibold" href="{{ post.url }}">
+        Leia o post completo →
+      </a>
+    </div>
+  {% endif %}
+{% endfor %}
+
+{% if posts.size == 0 %}
+  <p class="text-gray-400 italic">Nenhum post encontrado para este tópico.</p>
+{% endif %}

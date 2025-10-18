@@ -11,6 +11,19 @@ layout: main
   
   <em class="text-base text-gray-300 block mb-4">{{ date | dateDisplay }}</em>
   
+  {% if tags %}
+    <div class="flex flex-wrap gap-2 mb-6">
+      {% for tag in tags %}
+        {% unless tag == "posts" %}
+          <a href="/topicos/{{ tag | downcase }}" 
+             class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors">
+            {{ tag }}
+          </a>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  {% endif %}
+  
   <div class="prose prose-lg dark:prose-invert">
     {{ content }}
   </div>

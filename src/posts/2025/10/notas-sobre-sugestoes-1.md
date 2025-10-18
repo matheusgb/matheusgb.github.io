@@ -1,6 +1,7 @@
 ---
 title: Notas sobre sugestões - Parte 1
 date: 2025-10-10
+tags: [observabilidade]
 # published: false
 ---
 

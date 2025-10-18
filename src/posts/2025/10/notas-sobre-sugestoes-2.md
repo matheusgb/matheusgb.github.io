@@ -1,6 +1,7 @@
 ---
 title: Notas sobre sugestões - Parte 2
 date: 2025-10-11
+tags: [observabilidade]
 ---
 
 Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
