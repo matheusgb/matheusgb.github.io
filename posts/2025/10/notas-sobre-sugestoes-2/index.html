@@ -3,6 +3,14 @@
   <head>
     <meta charset="utf-8">
   	<meta name='viewport' content='width=device-width'>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+    
     <!-- Otimizações de rendering -->
     <meta name="color-scheme" content="dark">
     <meta name="format-detection" content="telephone=no">
@@ -59,20 +67,54 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
     <!-- Meta tags adicionais -->
     <meta name="author" content="Matheus Gomes">
     <meta name="robots" content="index, follow">
+    <meta name="generator" content="Eleventy v3.1.2">
+    <meta name="language" content="pt-BR">
     <link rel="canonical" href="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/">
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "name": "Notas sobre sugestões - Parte 2",
+      "headline": "Notas sobre sugestões - Parte 2",
+      "description": "
+Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+
+",
+      "url": "https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/",
+      "author": {
+        "@type": "Person",
+        "name": "Matheus Gomes",
+        "url": "https://matheusgb.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Matheus Gomes",
+        "url": "https://matheusgb.github.io"
+      },
+      "datePublished": "2025-10-10",
+      "dateModified": "2025-10-10"
+    }
+    </script>
 
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Precarregamento da imagem de capa para evitar piscar -->
-    <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp">
-    <link rel="dns-prefetch" href="/assets/">
-    <link rel="prefetch" href="/assets/img/top-img.webp">
-
-    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
-    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
-    <link href="/assets/styles/index.css" rel="stylesheet" />
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Critical resources preload -->
+    <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp" fetchpriority="high">
+    <link rel="preload" href="/assets/styles/tailwind.css" as="style">
+    <link rel="preload" href="/assets/styles/index.css" as="style">
+
+    <!-- Stylesheets in order of importance -->
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
+    <link href="/assets/styles/index.css" rel="stylesheet" />
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
@@ -168,44 +210,49 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   </head>
 
   <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
-    <!-- Imagem do topo - fora do Barba container para não piscar -->
-    <div class="w-full">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">Pular para o conteúdo principal</a>
+    
+    <!-- Header with site banner -->
+    <header class="w-full" role="banner">
       <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
         <img src="/assets/img/top-img.webp" 
-             alt="Header image"
+             alt="Imagem de cabeçalho do blog do Matheus Gomes - desenvolvedor de software"
              class="blog-header-image"
              loading="eager"
              fetchpriority="high"
+             width="672"
+             height="123"
              style="height: 123px; width: 100%; object-fit: cover; 
                     background-color: #2d3748; 
                     background-position: center; 
                     background-size: 100% auto;
                     opacity: 1;
                     transition: opacity 0.1s ease-out;">
-        </div>
       </div>
-    </div>
+    </header>
     
     <div data-barba="wrapper">
       <div data-barba="container">
-        
+        <main id="main-content" role="main">
+          
 <div class="min-h-screen flex flex-col">
 
 <main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
 
   
-<nav>
+<nav role="navigation" aria-label="Navegação principal">
   <ul class="flex justify-between items-center py-2 border-b-2 mb-6 text-base sm:text-lg text-white">
-    <div class="flex space-x-3 sm:space-x-6">
-      <li><a href="/" class="hover:text-gray-300 whitespace-nowrap">Posts</a></li>
-      <li><a href="/topicos" class="hover:text-gray-300 whitespace-nowrap">Tópicos</a></li>
-      <li><a href="/sobre-mim" class="hover:text-gray-300 whitespace-nowrap">Sobre mim</a></li>
+    <div class="flex space-x-3 sm:space-x-6" role="list">
+      <li><a href="/" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Posts</a></li>
+      <li><a href="/topicos" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Tópicos</a></li>
+      <li><a href="/sobre-mim" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Sobre mim</a></li>
     </div>
-    <div class="flex items-center space-x-3 sm:space-x-4">
+    <div class="flex items-center space-x-3 sm:space-x-4" role="list" aria-label="Links de redes sociais">
       
         <li>
-          <a href="https://github.com/matheusgb" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
-            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <a href="https://github.com/matheusgb" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity" aria-label="GitHub do Matheus Gomes (abre em nova aba)">
+            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M12 0.5C5.648 0.5 0.5 5.648 0.5 12c0 5.081 3.293 9.395 7.863 10.923.575.105.785-.25.785-.555 0-.274-.01-1.002-.015-1.967-3.198.695-3.875-1.541-3.875-1.541-.523-1.329-1.277-1.684-1.277-1.684-1.044-.714.079-.699.079-.699 1.155.081 1.763 1.186 1.763 1.186 1.026 1.758 2.692 1.25 3.35.956.104-.744.401-1.25.73-1.538-2.555-.29-5.24-1.278-5.24-5.688 0-1.257.45-2.285 1.186-3.092-.119-.29-.514-1.46.112-3.042 0 0 .966-.31 3.168 1.181.92-.256 1.904-.384 2.888-.389.98.005 1.968.133 2.888.389 2.202-1.491 3.168-1.181 3.168-1.181.626 1.582.231 2.752.112 3.042.737.807 1.186 1.835 1.186 3.092 0 4.42-2.69 5.394-5.25 5.678.413.356.781 1.059.781 2.135 0 1.54-.014 2.785-.014 3.164 0 .309.209.665.79.552C20.213 21.39 23.5 17.078 23.5 12c0-6.352-5.148-11.5-11.5-11.5z"/>
             </svg>
           </a>
@@ -213,8 +260,8 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
       
       
         <li>
-          <a href="https://www.linkedin.com/in/matheusgb/" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
-            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <a href="https://www.linkedin.com/in/matheusgb/" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity" aria-label="LinkedIn do Matheus Gomes (abre em nova aba)">
+            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
             </svg>
           </a>
@@ -224,29 +271,30 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   </ul>
 </nav>
 
-<div class="py-4">
-  <p class="mb-1">
-    <span class="text-5xl md:text-6xl font-black text-white leading-tight">Notas sobre sugestões - Parte 2</span>
-  </p>
-  
-  <em class="text-base text-gray-300 block mb-4">11-10-2025</em>
-  
-  
-    <div class="flex flex-wrap gap-2 mb-6">
-      
+<article class="py-4" itemscope itemtype="https://schema.org/BlogPosting">
+  <header>
+    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Notas sobre sugestões - Parte 2</h1>
+    
+    <time class="text-base text-gray-300 block mb-4" datetime="2025-10-10" itemprop="datePublished">11-10-2025</time>
+    
+    
+      <nav class="flex flex-wrap gap-2 mb-6" aria-label="Tags do post">
         
-      
+          
         
-          <a href="/topicos/observabilidade" 
-             class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors">
-            observabilidade
-          </a>
+          
+            <a href="/topicos/observabilidade" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              observabilidade
+            </a>
+          
         
-      
-    </div>
+      </nav>
+    
+  </header>
   
-  
-  <div class="prose prose-lg dark:prose-invert">
+  <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
     <p>Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.</p>
 <p>Meu código: <a href="https://github.com/matheusgb/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/master/memreader.c</a></p>
 <p>Mudanças sugeridas: <a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
@@ -402,12 +450,17 @@ Quando o programa recebe um sinal como <code>SIGINT</code>, o sono da thread é 
 <p>E <code>open()</code> já é uma função <code>POSIX</code> que consulta diretamente o kernel, reduzindo overhead da stdio e pulando o buffering, pegando o estado atual do arquivo <strong>sempre</strong>.</p>
 
   </div>
-</div>
+  
+  <meta itemprop="author" content="Matheus Gomes">
+  <meta itemprop="publisher" content="Matheus Gomes">
+  <meta itemprop="dateModified" content="2025-10-10">
+</article>
 
 </main>
 
 </div>
 
+        </main>
       </div>
     </div>
     
