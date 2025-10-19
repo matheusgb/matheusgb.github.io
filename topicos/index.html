@@ -161,9 +161,12 @@
     <!-- Imagem do topo - fora do Barba container para não piscar -->
     <div class="w-full">
       <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
-        <div class="bg-no-repeat blog-header-image" 
-             style="height: 123px; 
-                    background-image: url('/assets/img/top-img.webp'); 
+        <img src="/assets/img/top-img.webp" 
+             alt="Header image"
+             class="blog-header-image"
+             loading="eager"
+             fetchpriority="high"
+             style="height: 123px; width: 100%; object-fit: cover; 
                     background-color: #2d3748; 
                     background-position: center; 
                     background-size: 100% auto;
