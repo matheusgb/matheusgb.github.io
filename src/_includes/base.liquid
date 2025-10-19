@@ -3,6 +3,14 @@
   <head>
     <meta charset="utf-8">
   	<meta name='viewport' content='width=device-width'>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+    
     <!-- Otimizações de rendering -->
     <meta name="color-scheme" content="dark">
     <meta name="format-detection" content="telephone=no">
@@ -53,20 +61,51 @@
     <!-- Meta tags adicionais -->
     <meta name="author" content="{{ site.name }}">
     <meta name="robots" content="index, follow">
+    <meta name="generator" content="Eleventy v3.1.2">
+    <meta name="language" content="pt-BR">
     <link rel="canonical" href="{{ site.url }}{% if page.url %}{{ page.url }}{% else %}/{% endif %}">
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "{% if title and date %}BlogPosting{% else %}Blog{% endif %}",
+      "name": "{% if title and title != site.title %}{{ title }}{% else %}{{ site.title }}{% endif %}",
+      "headline": "{% if title and title != site.title %}{{ title }}{% else %}{{ site.title }}{% endif %}",
+      "description": "{% if post_excerpt %}{{ post_excerpt }}{% elsif description %}{{ description }}{% else %}{{ site.description }}{% endif %}",
+      "url": "{{ site.url }}{% if page.url %}{{ page.url }}{% else %}/{% endif %}",
+      "author": {
+        "@type": "Person",
+        "name": "{{ site.name }}",
+        "url": "{{ site.url }}"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "{{ site.name }}",
+        "url": "{{ site.url }}"
+      }{% if date %},
+      "datePublished": "{{ date | date: '%Y-%m-%d' }}",
+      "dateModified": "{{ date | date: '%Y-%m-%d' }}"{% endif %}
+    }
+    </script>
 
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Precarregamento da imagem de capa para evitar piscar -->
-    <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp">
-    <link rel="dns-prefetch" href="/assets/">
-    <link rel="prefetch" href="/assets/img/top-img.webp">
-
-    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
-    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
-    <link href="/assets/styles/index.css" rel="stylesheet" />
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Critical resources preload -->
+    <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp" fetchpriority="high">
+    <link rel="preload" href="/assets/styles/tailwind.css" as="style">
+    <link rel="preload" href="/assets/styles/index.css" as="style">
+
+    <!-- Stylesheets in order of importance -->
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
+    <link href="/assets/styles/index.css" rel="stylesheet" />
     <script>
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
@@ -162,27 +201,33 @@
   </head>
 
   <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
-    <!-- Imagem do topo - fora do Barba container para não piscar -->
-    <div class="w-full">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">Pular para o conteúdo principal</a>
+    
+    <!-- Header with site banner -->
+    <header class="w-full" role="banner">
       <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
         <img src="/assets/img/top-img.webp" 
-             alt="Header image"
+             alt="Imagem de cabeçalho do blog do Matheus Gomes - desenvolvedor de software"
              class="blog-header-image"
              loading="eager"
              fetchpriority="high"
+             width="672"
+             height="123"
              style="height: 123px; width: 100%; object-fit: cover; 
                     background-color: #2d3748; 
                     background-position: center; 
                     background-size: 100% auto;
                     opacity: 1;
                     transition: opacity 0.1s ease-out;">
-        </div>
       </div>
-    </div>
+    </header>
     
     <div data-barba="wrapper">
       <div data-barba="container">
-        {{ content }}
+        <main id="main-content" role="main">
+          {{ content }}
+        </main>
       </div>
     </div>
     

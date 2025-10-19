@@ -1,22 +1,22 @@
-<nav class="flex justify-center mt-8">
-    <div class="inline-flex">
+<nav class="flex justify-center mt-8" aria-label="Navegação de páginas">
+    <div class="inline-flex" role="list">
       {% if page.url != pagination.href.first %}
-        <a href="{{ pagination.href.first }}">
-          <button class="paginator-text">
+        <a href="{{ pagination.href.first }}" aria-label="Ir para a primeira página">
+          <button class="paginator-text" type="button">
             Início
           </button>
         </a>
       {% else %}
-        <button class="paginator-text cursor-not-allowed">
+        <button class="paginator-text cursor-not-allowed" type="button" disabled aria-label="Primeira página (atual)">
           Início
         </button>
       {% endif %}
       
 
       {% if pagination.href.previous %}
-        <a href="{{ pagination.href.previous }}">
-          <button class="py-2 px-4">
-            <img src="/assets/img/chevron-left.svg" alt="prev">
+        <a href="{{ pagination.href.previous }}" aria-label="Ir para a página anterior">
+          <button class="py-2 px-4" type="button">
+            <img src="/assets/img/chevron-left.svg" alt="Página anterior" width="24" height="24">
           </button>
         </a>
       {% else %}

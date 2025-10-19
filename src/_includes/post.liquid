@@ -4,27 +4,32 @@ layout: main
 
 {% include "nav.liquid" %}
 
-<div class="py-4">
-  <p class="mb-1">
-    <span class="text-5xl md:text-6xl font-black text-white leading-tight">{{ title}}</span>
-  </p>
+<article class="py-4" itemscope itemtype="https://schema.org/BlogPosting">
+  <header>
+    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">{{ title}}</h1>
+    
+    <time class="text-base text-gray-300 block mb-4" datetime="{{ date | date: '%Y-%m-%d' }}" itemprop="datePublished">{{ date | dateDisplay }}</time>
+    
+    {% if tags %}
+      <nav class="flex flex-wrap gap-2 mb-6" aria-label="Tags do post">
+        {% for tag in tags %}
+          {% unless tag == "posts" %}
+            <a href="/topicos/{{ tag | downcase }}" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              {{ tag }}
+            </a>
+          {% endunless %}
+        {% endfor %}
+      </nav>
+    {% endif %}
+  </header>
   
-  <em class="text-base text-gray-300 block mb-4">{{ date | dateDisplay }}</em>
-  
-  {% if tags %}
-    <div class="flex flex-wrap gap-2 mb-6">
-      {% for tag in tags %}
-        {% unless tag == "posts" %}
-          <a href="/topicos/{{ tag | downcase }}" 
-             class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors">
-            {{ tag }}
-          </a>
-        {% endunless %}
-      {% endfor %}
-    </div>
-  {% endif %}
-  
-  <div class="prose prose-lg dark:prose-invert">
+  <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
     {{ content }}
   </div>
-</div>
+  
+  <meta itemprop="author" content="{{ site.name }}">
+  <meta itemprop="publisher" content="{{ site.name }}">
+  <meta itemprop="dateModified" content="{{ date | date: '%Y-%m-%d' }}">
+</article>
