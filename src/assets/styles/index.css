@@ -213,24 +213,13 @@ a {
   }
 }
 
-/* Otimizações para a barra de capa */
+/* Otimizações para a imagem de capa - evita recarregamento no mobile */
 .blog-header-image {
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-font-smoothing: subpixel-antialiased;
-  /* Otimizações anti-piscar adicionais */
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  -ms-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-background-size: 100% auto;
-  background-size: 100% auto;
-  background-attachment: scroll;
-  /* Força compositing layer */
-  contain: layout paint;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  /* Força cache da imagem no mobile */
+  image-rendering: auto;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 /* Botões de paginação */
