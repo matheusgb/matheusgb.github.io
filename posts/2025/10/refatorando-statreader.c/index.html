@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+  	<meta name='viewport' content='width=device-width'>
+    
+    <!-- Security Headers (only ones that work in meta tags) -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <!-- Otimizações de rendering -->
+    <meta name="color-scheme" content="dark">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FR0EREBNL3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-FR0EREBNL3');
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/img/blog.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/img/blog.png">
+
+    <title>matheusgb</title>
+    <meta name='description' content=Buscando ser menos leigo que ontem>
+    <meta name="theme-color" content="#1c1c1c"/>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/">
+    <meta property="og:title" content="Refatorando statreader.c - aplicando lições do memreader.c para monitoramento de CPU - matheusgb">
+    <meta property="og:description" content="
+Uma análise prática da refatoração do `statreader.c` aplicando as sugestões do Sanchez sobre o `memreader.c`. Explorando o `/proc/stat`, diferenças entre CPUs físicas e virtuais, significado de jiffies, e como transformar dados do kernel em observabilidade útil.
+
+">
+    <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="matheusgb">
+    <meta property="og:locale" content="pt_BR">
+    
+    <meta property="article:author" content="Matheus Gomes">
+    <meta property="article:published_time" content="2025-10-18">
+    <meta property="article:section" content="Blog">
+    
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/">
+    <meta name="twitter:title" content="Refatorando statreader.c - aplicando lições do memreader.c para monitoramento de CPU - matheusgb">
+    <meta name="twitter:description" content="
+Uma análise prática da refatoração do `statreader.c` aplicando as sugestões do Sanchez sobre o `memreader.c`. Explorando o `/proc/stat`, diferenças entre CPUs físicas e virtuais, significado de jiffies, e como transformar dados do kernel em observabilidade útil.
+
+">
+    <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta name="twitter:creator" content="@matheusgb">
+    <meta name="twitter:site" content="@matheusgb">
+
+    <!-- Meta tags adicionais -->
+    <meta name="author" content="Matheus Gomes">
+    <meta name="robots" content="index, follow">
+    <meta name="generator" content="Eleventy v3.1.2">
+    <meta name="language" content="pt-BR">
+    <link rel="canonical" href="https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/">
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "name": "Refatorando statreader.c - aplicando lições do memreader.c para monitoramento de CPU",
+      "headline": "Refatorando statreader.c - aplicando lições do memreader.c para monitoramento de CPU",
+      "description": "
+Uma análise prática da refatoração do `statreader.c` aplicando as sugestões do Sanchez sobre o `memreader.c`. Explorando o `/proc/stat`, diferenças entre CPUs físicas e virtuais, significado de jiffies, e como transformar dados do kernel em observabilidade útil.
+
+",
+      "url": "https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/",
+      "author": {
+        "@type": "Person",
+        "name": "Matheus Gomes",
+        "url": "https://matheusgb.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Matheus Gomes",
+        "url": "https://matheusgb.github.io"
+      },
+      "datePublished": "2025-10-18",
+      "dateModified": "2025-10-18"
+    }
+    </script>
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Critical resources preload -->
+    <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp" fetchpriority="high">
+    <link rel="preload" href="/assets/styles/tailwind.css" as="style">
+    <link rel="preload" href="/assets/styles/index.css" as="style">
+
+    <!-- Stylesheets in order of importance -->
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
+    <link href="/assets/styles/index.css" rel="stylesheet" />
+    <script>
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+      
+      // Processa código inline
+      function processInlineCode() {
+        const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
+        
+        if (contentArea) {
+          // Processa elementos <code> existentes
+          const codeElements = contentArea.querySelectorAll('code:not(pre code)');
+          codeElements.forEach((codeEl) => {
+            codeEl.classList.add('inline-code');
+            codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
+          });
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', processInlineCode);
+    </script>
+    
+    <!-- Barba.js para navegação SPA -->
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script>
+      // Função para configurar link de volta
+      function setupBackLink() {
+        const backLink = document.getElementById('back-link');
+        if (backLink) {
+          const previousPage = sessionStorage.getItem('previousPage');
+          const referrer = document.referrer;
+          
+          // Prioriza sessionStorage (navegação via Barba.js)
+          let origin = previousPage;
+          
+          // Se não há sessionStorage, usa referrer (primeiro acesso)
+          if (!origin && referrer) {
+            const referrerUrl = new URL(referrer);
+            origin = referrerUrl.pathname;
+          }
+          
+          
+          if (origin === '/' || origin === '/index.html') {
+            backLink.href = '/';
+            backLink.innerHTML = '← Voltar para Posts';
+          } else if (origin === '/topicos' || origin === '/topicos/') {
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          } else {
+            // Padrão se não conseguir detectar
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          }
+        }
+      }
+      
+      // Inicialização após DOM estar pronto
+      document.addEventListener('DOMContentLoaded', function() {
+        // Configura link de volta na primeira carga
+        setupBackLink();
+        
+        // Inicializa Barba.js
+        barba.init({
+          // Configuração mais robusta para interceptar links
+          prevent: ({ el }) => {
+            // Não intercepta links externos ou com target="_blank"
+            return el.getAttribute('target') === '_blank' || 
+                   el.getAttribute('href').startsWith('http') ||
+                   el.getAttribute('href').startsWith('mailto:');
+          },
+          
+          transitions: [{
+            name: 'instant-transition',
+            leave(data) {
+              // Armazena a página atual antes de sair
+              sessionStorage.setItem('previousPage', data.current.url.path);
+              
+              // Sem transição - instantâneo
+              return Promise.resolve();
+            },
+            enter(data) {
+              // Processamento imediato sem delays
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
+              
+              // Resolve instantaneamente
+              return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
+            }
+          }]
+        });
+        
+      });
+    </script>
+  </head>
+
+  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">Pular para o conteúdo principal</a>
+    
+    <!-- Header with site banner -->
+    <header class="w-full" role="banner">
+      <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+        <img src="/assets/img/top-img.webp" 
+             alt="Imagem de cabeçalho do blog do Matheus Gomes - desenvolvedor de software"
+             class="blog-header-image"
+             loading="eager"
+             fetchpriority="high"
+             width="672"
+             height="123"
+             style="height: 123px; width: 100%; object-fit: cover; 
+                    background-color: #2d3748; 
+                    background-position: center; 
+                    background-size: 100% auto;
+                    opacity: 1;
+                    transition: opacity 0.1s ease-out;">
+      </div>
+    </header>
+    
+    <div data-barba="wrapper">
+      <div data-barba="container">
+        <main id="main-content" role="main">
+          
+<div class="min-h-screen flex flex-col">
+
+<main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+
+  
+<nav role="navigation" aria-label="Navegação principal">
+  <ul class="flex justify-between items-center py-2 border-b-2 mb-6 text-base sm:text-lg text-white">
+    <div class="flex space-x-3 sm:space-x-6" role="list">
+      <li><a href="/" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Posts</a></li>
+      <li><a href="/topicos" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Tópicos</a></li>
+      <li><a href="/sobre-mim" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Sobre mim</a></li>
+    </div>
+    <div class="flex items-center space-x-3 sm:space-x-4" role="list" aria-label="Links de redes sociais">
+      
+        <li>
+          <a href="https://github.com/matheusgb" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity" aria-label="GitHub do Matheus Gomes (abre em nova aba)">
+            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 0.5C5.648 0.5 0.5 5.648 0.5 12c0 5.081 3.293 9.395 7.863 10.923.575.105.785-.25.785-.555 0-.274-.01-1.002-.015-1.967-3.198.695-3.875-1.541-3.875-1.541-.523-1.329-1.277-1.684-1.277-1.684-1.044-.714.079-.699.079-.699 1.155.081 1.763 1.186 1.763 1.186 1.026 1.758 2.692 1.25 3.35.956.104-.744.401-1.25.73-1.538-2.555-.29-5.24-1.278-5.24-5.688 0-1.257.45-2.285 1.186-3.092-.119-.29-.514-1.46.112-3.042 0 0 .966-.31 3.168 1.181.92-.256 1.904-.384 2.888-.389.98.005 1.968.133 2.888.389 2.202-1.491 3.168-1.181 3.168-1.181.626 1.582.231 2.752.112 3.042.737.807 1.186 1.835 1.186 3.092 0 4.42-2.69 5.394-5.25 5.678.413.356.781 1.059.781 2.135 0 1.54-.014 2.785-.014 3.164 0 .309.209.665.79.552C20.213 21.39 23.5 17.078 23.5 12c0-6.352-5.148-11.5-11.5-11.5z"/>
+            </svg>
+          </a>
+        </li>
+      
+      
+        <li>
+          <a href="https://www.linkedin.com/in/matheusgb/" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity" aria-label="LinkedIn do Matheus Gomes (abre em nova aba)">
+            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+        </li>
+      
+    </div>
+  </ul>
+</nav>
+
+<article class="py-4" itemscope itemtype="https://schema.org/BlogPosting">
+  <header>
+    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Refatorando statreader.c - aplicando lições do memreader.c para monitoramento de CPU</h1>
+    
+    <time class="text-base text-gray-300 block mb-4" datetime="2025-10-18" itemprop="datePublished">19-10-2025</time>
+    
+    
+      <nav class="flex flex-wrap gap-2 mb-6" aria-label="Tags do post">
+        
+          
+        
+          
+            <a href="/topicos/linguagem c" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              linguagem c
+            </a>
+          
+        
+          
+            <a href="/topicos/jornada observabilidade" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              jornada observabilidade
+            </a>
+          
+        
+      </nav>
+    
+  </header>
+  
+  <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
+    <p>Uma análise prática da refatoração do <code>statreader.c</code> aplicando as sugestões do Sanchez sobre o <code>memreader.c</code>. Explorando o <code>/proc/stat</code>, diferenças entre CPUs físicas e virtuais, significado de jiffies, e como transformar dados do kernel em observabilidade útil.</p>
+<p>memreader.c antigo: <a href="https://github.com/matheusgb/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/master/memreader.c</a></p>
+<p>Mudanças memreader.c sugeridas: <a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
+<p>statreader.c antigo (pré sugestões do memreader.c): <a href="https://github.com/matheusgb/readers/blob/b4efb4e45477fd9fc73ec9155940cd4bcc3e42e1/statreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/b4efb4e45477fd9fc73ec9155940cd4bcc3e42e1/statreader.c</a></p>
+<p>statreader.c refatorado: <a href="https://github.com/matheusgb/readers/blob/a685106859a114cabc7cc1221d34c978f6588a5b/statreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/a685106859a114cabc7cc1221d34c978f6588a5b/statreader.c</a></p>
+<hr>
+<h3>Observando <code>/proc/stat</code></h3>
+<p>A ideia desse <code>statreader.c</code> é semelhante ao <code>memreader.c</code>, porém para CPU.</p>
+<p>Comecei explorando como era o arquivo, e me deparei com essa estrutura:</p>
+<pre><code>cpu  6282 4 4649 3809428 922 0 551 0 0 0
+cpu0 181 0 161 118967 34 0 395 0 0 0
+cpu1 202 0 40 119119 52 0 32 0 0 0
+cpu2 266 0 111 119025 20 0 9 0 0 0
+cpu3 41 1 59 119120 185 0 13 0 0 0
+cpu4 118 0 277 118970 18 0 23 0 0 0
+cpu5 477 0 191 118915 28 0 6 0 0 0
+cpu6 135 0 198 118926 113 0 16 0 0 0
+cpu7 109 0 106 119141 56 0 12 0 0 0
+cpu8 182 0 124 119068 32 0 0 0 0 0
+cpu9 71 0 79 119187 14 0 6 0 0 0
+cpu10 225 0 104 119083 12 0 0 0 0 0
+cpu11 103 0 79 119240 9 0 1 0 0 0
+cpu12 382 0 208 118809 26 0 4 0 0 0
+cpu13 200 0 74 119152 5 0 4 0 0 0
+cpu14 480 0 275 118651 26 0 4 0 0 0
+cpu15 204 1 116 119102 0 0 6 0 0 0
+cpu16 368 0 253 118753 11 0 1 0 0 0
+cpu17 422 0 327 118671 10 0 7 0 0 0
+cpu18 171 0 173 119016 11 0 0 0 0 0
+cpu19 99 0 76 119227 8 0 0 0 0 0
+cpu20 105 0 206 119042 26 0 0 0 0 0
+cpu21 165 0 70 119174 22 0 0 0 0 0
+cpu22 351 1 224 118841 18 0 0 0 0 0
+cpu23 137 0 185 119082 10 0 7 0 0 0
+cpu24 186 0 233 118957 15 0 0 0 0 0
+cpu25 78 0 59 119273 3 0 2 0 0 0
+cpu26 232 0 145 118997 25 0 0 0 0 0
+cpu27 137 0 32 119241 10 0 1 0 0 0
+cpu28 209 1 90 119089 25 0 2 0 0 0
+cpu29 68 0 85 119208 52 0 0 0 0 0
+cpu30 141 0 259 119017 25 0 0 0 0 0
+cpu31 37 0 30 119349 7 0 0 0 0 0
+intr 700381 0 0 0 0 0 0 0 0 0 13 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1201 1 1 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ctxt 1612849
+btime 1760910622
+processes 7460
+</code></pre>
+<p>… e eu não entendi nada 🤭.</p>
+<ul>
+<li>Por qual motivo tem 32 CPU’s se meu processador tem 16 cores?</li>
+<li>O que cada coluna significa?</li>
+<li>O que é <code>intr</code>, <code>ctxt</code> e <code>btime</code>? (<code>processes</code> é meio “auto conclusivo”, mas ainda assim não tive clareza do que significava).</li>
+<li>Esses números nas colunas representam o que exatamente?</li>
+<li>Como uso isso de forma útil para observar o uso de recursos da máquina?</li>
+</ul>
+<h3>“Por qual motivo tem 32 CPU’s se meu processador tem 16 cores?”</h3>
+<p>Meu processador tem 16 núcleos <strong>físicos</strong>, mas cada núcleo físico pode executar duas threads simultaneamente usando <a href="https://www.intel.com.br/content/www/br/pt/gaming/resources/hyper-threading.html" target="_blank" rel="noopener noreferrer">Hyper-Threading</a> (caso processador seja Intel) ou <a href="https://www.amd.com/en/blogs/2025/simultaneous-multithreading-driving-performance-a.html" target="_blank" rel="noopener noreferrer">SMT</a> (caso seja AMD).</p>
+<p>O kernel do Linux enxerga cada thread como uma CPU independente. Por isso 32.</p>
+<p>Com isso, cada thread pode ser monitorada de forma independente, e caso seja necessário métricas de uso do processador físico podemos somar ou agrupar threads do mesmo núcleo físico.</p>
+<hr>
+<h3>“O que cada coluna dos CPU’s significa?”</h3>
+<p>Na struct, já deixei breves definições do que cada coluna significa, a ordem da esquerda para direita, é: <code>user</code>, <code>nice</code>, <code>system</code>, <code>idle</code>, <code>iowait</code>, <code>irq</code>, <code>softirq</code>, <code>steal</code>, <code>guest</code> e <code>guest_nice</code>.</p>
+<pre class="language-c"><code class="language-c"><span class="token keyword">typedef</span> <span class="token keyword">struct</span><br><span class="token punctuation">{</span>                              <span class="token comment">// Gerencia:</span><br>    <span class="token keyword">char</span> user<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>       <span class="token comment">// Programas comuns, execução de instruções normais de programas.</span><br>    <span class="token keyword">char</span> nice<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>       <span class="token comment">// Processos de baixa prioridade.</span><br>    <span class="token keyword">char</span> system<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>     <span class="token comment">// Kernel, grava algo em disco, aloca memória, cria threads, pacotes de rede.</span><br>    <span class="token keyword">char</span> idle<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>       <span class="token comment">// Ociosidade.</span><br>    <span class="token keyword">char</span> iowait<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>     <span class="token comment">// Ociosidade, mas diferente de idle, há trabalho pendente, CPU aguardando rede ou disco responder.</span><br>    <span class="token keyword">char</span> irq<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>        <span class="token comment">// Interrupções de Hardware. (ex: placa de rede informando que recebeu um pacote, teclado digitando, SSD sinalizando que terminou uma escrita e etc...)</span><br>    <span class="token keyword">char</span> softirq<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>    <span class="token comment">// Interrupções de Sofware. (ex: processamento de pacotes TCP, tarefas do kernel, etc...)</span><br>    <span class="token keyword">char</span> steal<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>      <span class="token comment">// Competição entre VMs por CPU, se uma VM que compartilha hardware com outra for menos priorizada, steal sobe.</span><br>    <span class="token keyword">char</span> guest<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span>      <span class="token comment">// Tempo gasto executando máquinas virtuais no sistema.</span><br>    <span class="token keyword">char</span> guest_nice<span class="token punctuation">[</span>MAX_ITEM<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">// Análogo a nice mas no contexto de virtualização, VM configurada com prioridade reduzida apresenta aumento.</span><br><span class="token punctuation">}</span> CPU<span class="token punctuation">;</span></code></pre>
+<p>Explicando melhor:</p>
+<ul>
+<li>
+<p><code>user</code>: Tempo gasto executando processos em espaço de usuário (programas normais, fora do kernel). Indica carga real de aplicações, aumento pode sinalizar picos de uso de CPU por aplicações.</p>
+</li>
+<li>
+<p><code>nice</code>: Tempo gasto com processos de prioridade reduzida (nice &gt; 0). Mede quanto processamento está sendo cedido para tarefas “menos importantes”. Ajuda a avaliar balanceamento de prioridades.</p>
+</li>
+<li>
+<p><code>system</code>: Tempo gasto dentro do kernel, executando chamadas de sistema (<a href="https://pt.wikipedia.org/wiki/Chamada_de_sistema" target="_blank" rel="noopener noreferrer">syscalls</a>), I/O, alocação de memória, etc. Ajuda a identificar overhead de kernel, alto valor pode indicar gargalos de I/O ou drivers.</p>
+</li>
+<li>
+<p><code>idle</code>: Tempo em que a CPU está ociosa (sem tarefas). Representa inatividade total. Útil para saber se a CPU está realmente livre.</p>
+</li>
+<li>
+<p><code>iowait</code>: Tempo ocioso esperando respostas de disco ou rede. Alta porcentagem indica gargalos de I/O; CPU parada esperando I/O concluir.</p>
+</li>
+<li>
+<p><code>irq</code>: Tempo gasto processando interrupções de hardware (placas, discos, teclados). Útil pra diagnosticar interrupções excessivas de dispositivos. Ex: placa de rede gerando carga alta.</p>
+</li>
+<li>
+<p><code>softirq</code>: Tempo gasto com interrupções de software, rotinas do kernel disparadas por eventos assíncronos (ex: TCP/IP). Mostra custo de tratamento de rede e tarefas assíncronas. Pode revelar sobrecarga de pacotes, firewall, etc.</p>
+</li>
+<li>
+<p><code>steal</code>: Tempo em que a CPU física estava ocupada por outra VM no mesmo host (virtualização). Em ambientes virtuais, mede contenção de CPU entre VMs, alto valor = host sobrecarregado.</p>
+</li>
+<li>
+<p><code>guest</code>: Tempo executando máquinas virtuais guest no host atual. Indica quanto da CPU do host é consumido pelas VMs.</p>
+</li>
+<li>
+<p><code>guest_nice</code>: Igual a <code>nice</code>, mas dentro do contexto de máquinas virtuais. Ajuda a diferenciar prioridades dentro do <a href="https://www.ibm.com/br-pt/think/topics/hypervisors" target="_blank" rel="noopener noreferrer">hypervisor</a>, útil em observabilidade de infraestrutura virtual.</p>
+</li>
+</ul>
+<hr>
+<h3>“O que é <code>intr</code>, <code>ctxt</code> e <code>btime</code>? (<code>processes</code> é meio “auto conclusivo”, mas ainda assim não tive clareza do que significava)”</h3>
+<p><em>Obs.: Esses campos, ainda não utilizo no programa <code>statreader.c</code>, mas será adicionado no futuro.</em></p>
+<h4>• Sobre <code>intr</code>:</h4>
+<pre><code>intr 700381 0 0 0 0 0 0 0 0 0 13 ...
+</code></pre>
+<p>O primeiro número <code>700381</code> indica o total acumulado de interrupções de hardware desde que o sistema foi iniciado. De forma resumida: Os números seguintes correspondem à contagem individual de cada IRQ, na mesma ordem mostrada em <code>/proc/interrupts</code>.</p>
+<p>O <code>irq</code> lá de cima (na linha cpu do <code>/proc/stat</code>) mostra quanto tempo de CPU foi gasto executando rotinas de interrupção de hardware, ou seja, tempo de processamento consumido por IRQs.</p>
+<p>Já os <code>irq</code> da linha <code>intr</code> mostram quantas interrupções de hardware aconteceram, não o tempo gasto nelas.</p>
+<p><strong>TL;DR</strong>: <code>cpu: irq</code>: quanto tempo a CPU trabalhou com interrupções. <code>intr</code>: quantas vezes interrupções ocorreram.</p>
+<h4>• Sobre <code>ctxt</code>:</h4>
+<p><code>ctxt</code> indica o número total de trocas de contexto (<a href="https://en.wikipedia.org/wiki/Context_switch" target="_blank" rel="noopener noreferrer">context switches</a>) que ocorreram desde que o sistema foi iniciado.</p>
+<p><em>O que é troca de contexto?</em></p>
+<p>Resumindo: Toda vez que o kernel pausa um processo para dar tempo de CPU a outro, ele precisa salvar o estado do processo atual e carregar o estado do próximo processo, isso é uma troca de contexto. (Inclusive, o maior exemplo que temos disso é o multitasking, onde o processador alterna muito rapidamente entre processos, dando a impressão que estão acontecendo ao mesmo tempo.)</p>
+<h4>• Sobre <code>btime</code>:</h4>
+<p>É apenas um marco temporal fixo indicando quando o sistema começou a rodar, em <a href="https://pt.wikipedia.org/wiki/Era_Unix" target="_blank" rel="noopener noreferrer">unix epoch</a>. 🙂</p>
+<h4>• Sobre <code>processes</code>:</h4>
+<p>Indica o número total de processos que o kernel já criou desde que o sistema iniciou.</p>
+<p>Cada vez que um processo é criado, esse contador incrementa. Ele não diminui quando um processo termina; é um valor cumulativo e não indica quantos processos estão rodando atualmente, apenas quantos foram criados desde o boot.</p>
+<h3>“Esses números nas colunas CPU representam o que exatamente?”</h3>
+<p>Cada valor é um contador cumulativo de jiffies desde o boot. Um <a href="https://litux.nl/mirror/kerneldevelopment/0672327201/ch10lev1sec3.html" target="_blank" rel="noopener noreferrer">jiffy</a> é uma unidade de tempo do kernel (normalmente 1/100 ou 1/250 de segundo, dependendo do sistema).</p>
+<h3>“Como uso isso tudo de forma útil para observar o uso de recursos da máquina?”</h3>
+<p><em>Ainda, honestamente, estou fundamentando isso, mas pesquisando vi algumas possibilidades:</em></p>
+<ol>
+<li>Uso de CPU por categoria</li>
+</ol>
+<p><code>Stacked area chart</code>: Mostra a composição do uso de CPU ao longo do tempo. Cada cor = uma categoria (user, system, idle…).</p>
+<p><code>Bar chart por instantes</code>: Mostra a porcentagem de cada tipo em momentos específicos.</p>
+<p>Serviria para identificar se a CPU está sendo mais ocupada por processos normais (user) ou pelo kernel (system).</p>
+<ol start="2">
+<li>Uso por núcleo</li>
+</ol>
+<p><code>Heatmap</code>: Núcleos no eixo Y, tempo no eixo X, cor = porcentagem de uso.</p>
+<p><code>Line chart por núcleo</code>: Cada linha = um núcleo.</p>
+<p>Serviria para detectar núcleos mais sobrecarregados e visualizar balanceamento de threads e escalonamento do kernel.</p>
+<ol start="3">
+<li>Pico e variação de uso</li>
+</ol>
+<p>Usar diferenças entre leituras consecutivas (delta jiffies).</p>
+<p><code>Line chart</code> do delta para cada categoria ou CPU.</p>
+<p><code>Histogramas</code> de delta para medir frequência de altos usos.</p>
+<p>Serviria para identificar picos curtos que não aparecem na média e detectar “spikes” de I/O ou interrupções inesperadas.</p>
+<ol start="4">
+<li>Observabilidade de interrupções e contexto</li>
+</ol>
+<p>Usando irq, softirq + contadores de contexto (ctxt).</p>
+<p><code>Line chart</code>: Quantidade de interrupções ao longo do tempo.</p>
+<p><code>Stacked chart</code>: Hardware vs Software interrupts.</p>
+<p>Serviria para medir latência de dispositivos ou carga de rede e ver se há saturação por IRQ ou softirq.</p>
+<ol start="5">
+<li>Virtualização</li>
+</ol>
+<p>Usando guest, guest_nice, steal.</p>
+<p><code>Line chart</code> mostrando tempo de CPU “roubado” (steal) ou consumido por VMs.</p>
+<p>Serviria para entender performance dentro de VMs e planejar alocação de CPU para containers/VMs.</p>
+<ol start="6">
+<li>Timestamps</li>
+</ol>
+<p>Alinhar todos os dados ao tempo real, criar dashboards históricos.</p>
+<p>Serviria para ver tendências de uso ao longo do dia e correlacionar picos de CPU com eventos do sistema.</p>
+<hr>
+<h3>statreader.c antes x depois</h3>
+<p>statreader.c antigo (pré sugestões do memreader.c): <a href="https://github.com/matheusgb/readers/blob/b4efb4e45477fd9fc73ec9155940cd4bcc3e42e1/statreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/b4efb4e45477fd9fc73ec9155940cd4bcc3e42e1/statreader.c</a></p>
+<p>statreader.c refatorado: <a href="https://github.com/matheusgb/readers/blob/a685106859a114cabc7cc1221d34c978f6588a5b/statreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/a685106859a114cabc7cc1221d34c978f6588a5b/statreader.c</a></p>
+<p>A nova versão do código traz avanços. A leitura via open() e read() elimina o overhead da stdio (<code>fopen</code>, <code>fgets</code>).</p>
+<p>O tratamento de erros ficou mais robusto, com o uso explícito de <code>errno</code> e mensagens padronizadas por meio da função <code>reporta_erro()</code>.</p>
+<p>A inclusão de timestamps com <code>clock_gettime()</code> agrega contexto temporal às leituras, o que é essencial para análise de desempenho, controle e rastreabilidade.</p>
+<p>O parser manual implementado com <code>copia_token()</code> e <code>pula_espacos()</code> remove a dependência de <code>sscanf</code>.</p>
+<p>O parsing manual e a manipulação direta de ponteiros aumentam a complexidade e o risco de erros sutis, mas honestamente não dá pra fugir disso pra sempre 😅.</p>
+<p>Um ponto importante destacado pelo Sanchez é o uso indevido de símbolos reservados como <code>_POSIX_C_SOURCE</code>. Identificadores iniciados por sublinhado e letras maiúsculas são reservados pelo padrão C e POSIX, e defini-los manualmente pode alterar o comportamento das headers, habilitando ou desabilitando funções de forma imprevisível, como se “selecionasse versões específicas do header”.</p>
+<p>Ao definir <code>_POSIX_C_SOURCE</code>, pode ser habilitado ou desabilitado funções como <code>clock_gettime()</code> ou <code>pread()</code>. Então, dependendo de como o símbolo é definido, essas funções podem estar disponíveis ou não.</p>
+<pre class="language-c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">_POSIX_C_SOURCE</span> <span class="token expression"><span class="token number">199506L</span></span></span><br><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;time.h></span></span><br><br><span class="token keyword">struct</span> <span class="token class-name">timespec</span> ts<span class="token punctuation">;</span><br><span class="token function">clock_gettime</span><span class="token punctuation">(</span>CLOCK_REALTIME<span class="token punctuation">,</span> <span class="token operator">&amp;</span>ts<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// ERRO: função não declarada</span></code></pre>
+<pre class="language-c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">_POSIX_C_SOURCE</span> <span class="token expression"><span class="token number">199309L</span></span></span><br><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;time.h></span></span><br><br><span class="token keyword">struct</span> <span class="token class-name">timespec</span> ts<span class="token punctuation">;</span><br><span class="token function">clock_gettime</span><span class="token punctuation">(</span>CLOCK_REALTIME<span class="token punctuation">,</span> <span class="token operator">&amp;</span>ts<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// OK</span></code></pre>
+<p>O motivo pelo qual usei foi por conta de um erro estético que o vscode estava apresentando em <code>CLOCK_REALTIME</code>, quando adicionei <code>_POSIX_C_SOURCE</code> esse erro sumiu. Antes o programa já compilava corretamente, a adição foi desnecessária, e implica a perigos também desnecessários.</p>
+
+  </div>
+  
+  <meta itemprop="author" content="Matheus Gomes">
+  <meta itemprop="publisher" content="Matheus Gomes">
+  <meta itemprop="dateModified" content="2025-10-18">
+</article>
+
+</main>
+
+</div>
+
+        </main>
+      </div>
+    </div>
+    
+  </body>
+</html>

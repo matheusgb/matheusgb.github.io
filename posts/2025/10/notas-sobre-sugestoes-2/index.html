@@ -33,9 +33,9 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/">
-    <meta property="og:title" content="Notas sobre sugestões - Parte 2 - matheusgb">
+    <meta property="og:title" content="Explorando o ELF e as seções de memória em C - Parte 2 das notas sobre o memreader.c - matheusgb">
     <meta property="og:description" content="
-Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Nessa parte 2 das notas sobre o `memreader.c`, mergulho no formato binário `ELF` e nas seções de memória `.BSS`, `.DATA` e `.RODATA`. Também discuto como usar `nm` e `objdump` para inspecionar símbolos, além de entender a relação entre `signal handlers`, `nanosleep()` e chamadas POSIX como `open()` e `fopen()`.
 
 ">
     <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -52,9 +52,9 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/">
-    <meta name="twitter:title" content="Notas sobre sugestões - Parte 2 - matheusgb">
+    <meta name="twitter:title" content="Explorando o ELF e as seções de memória em C - Parte 2 das notas sobre o memreader.c - matheusgb">
     <meta name="twitter:description" content="
-Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Nessa parte 2 das notas sobre o `memreader.c`, mergulho no formato binário `ELF` e nas seções de memória `.BSS`, `.DATA` e `.RODATA`. Também discuto como usar `nm` e `objdump` para inspecionar símbolos, além de entender a relação entre `signal handlers`, `nanosleep()` e chamadas POSIX como `open()` e `fopen()`.
 
 ">
     <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -73,10 +73,10 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
     {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "name": "Notas sobre sugestões - Parte 2",
-      "headline": "Notas sobre sugestões - Parte 2",
+      "name": "Explorando o ELF e as seções de memória em C - Parte 2 das notas sobre o memreader.c",
+      "headline": "Explorando o ELF e as seções de memória em C - Parte 2 das notas sobre o memreader.c",
       "description": "
-Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Nessa parte 2 das notas sobre o `memreader.c`, mergulho no formato binário `ELF` e nas seções de memória `.BSS`, `.DATA` e `.RODATA`. Também discuto como usar `nm` e `objdump` para inspecionar símbolos, além de entender a relação entre `signal handlers`, `nanosleep()` e chamadas POSIX como `open()` e `fopen()`.
 
 ",
       "url": "https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-2/",
@@ -121,11 +121,19 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
         const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
         
         if (contentArea) {
+          // Processa elementos <code> existentes
           const codeElements = contentArea.querySelectorAll('code:not(pre code)');
-          
           codeElements.forEach((codeEl) => {
             codeEl.classList.add('inline-code');
             codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
           });
         }
       }
@@ -193,11 +201,18 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
             },
             enter(data) {
               // Processamento imediato sem delays
-              processInlineCode();
-              setupBackLink();
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
               
               // Resolve instantaneamente
               return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
             }
           }]
         });
@@ -270,7 +285,7 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 <article class="py-4" itemscope itemtype="https://schema.org/BlogPosting">
   <header>
-    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Notas sobre sugestões - Parte 2</h1>
+    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Explorando o ELF e as seções de memória em C - Parte 2 das notas sobre o memreader.c</h1>
     
     <time class="text-base text-gray-300 block mb-4" datetime="2025-10-10" itemprop="datePublished">11-10-2025</time>
     
@@ -280,10 +295,26 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
           
         
           
-            <a href="/topicos/observabilidade" 
+            <a href="/topicos/linguagem c" 
                class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
                itemprop="keywords">
-              observabilidade
+              linguagem c
+            </a>
+          
+        
+          
+            <a href="/topicos/sistemas operacionais" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              sistemas operacionais
+            </a>
+          
+        
+          
+            <a href="/topicos/jornada observabilidade" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              jornada observabilidade
             </a>
           
         
@@ -292,9 +323,10 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   </header>
   
   <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
-    <p>Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.</p>
+    <p>Nessa parte 2 das notas sobre o <code>memreader.c</code>, mergulho no formato binário <code>ELF</code> e nas seções de memória <code>.BSS</code>, <code>.DATA</code> e <code>.RODATA</code>. Também discuto como usar <code>nm</code> e <code>objdump</code> para inspecionar símbolos, além de entender a relação entre <code>signal handlers</code>, <code>nanosleep()</code> e chamadas POSIX como <code>open()</code> e <code>fopen()</code>.</p>
 <p>Meu código: <a href="https://github.com/matheusgb/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/master/memreader.c</a></p>
 <p>Mudanças sugeridas: <a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
+<hr>
 <h3>Conhecendo um pouco sobre <code>ELF</code> e seções de memória <code>.BSS</code>, <code>.DATA</code> e <code>.RODATA</code></h3>
 <p>Após a compilação é gerado um arquivo <code>ELF</code> em disco (binário). Esse arquivo contém descrições das seções de memória <code>.BSS</code>, <code>.DATA</code>, <code>.RODATA</code> e outras.</p>
 <p><code>.BSS</code>: Armazena dados globais estáticos não inicializados.

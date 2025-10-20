@@ -33,9 +33,9 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-1/">
-    <meta property="og:title" content="Notas sobre sugestões - Parte 1 - matheusgb">
+    <meta property="og:title" content="Analisando sugestões no memreader.c - static, volatile e signal handlers em C - matheusgb">
     <meta property="og:description" content="
-Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Uma análise das sugestões do Sanchez sobre o `memreader.c`, explorando conceitos essenciais da linguagem C como `volatile`, `static`, declarações antecipadas de função (forward declarations) e o funcionamento de signal handlers.
 
 ">
     <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -52,9 +52,9 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-1/">
-    <meta name="twitter:title" content="Notas sobre sugestões - Parte 1 - matheusgb">
+    <meta name="twitter:title" content="Analisando sugestões no memreader.c - static, volatile e signal handlers em C - matheusgb">
     <meta name="twitter:description" content="
-Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Uma análise das sugestões do Sanchez sobre o `memreader.c`, explorando conceitos essenciais da linguagem C como `volatile`, `static`, declarações antecipadas de função (forward declarations) e o funcionamento de signal handlers.
 
 ">
     <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -73,10 +73,10 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
     {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "name": "Notas sobre sugestões - Parte 1",
-      "headline": "Notas sobre sugestões - Parte 1",
+      "name": "Analisando sugestões no memreader.c - static, volatile e signal handlers em C",
+      "headline": "Analisando sugestões no memreader.c - static, volatile e signal handlers em C",
       "description": "
-Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Uma análise das sugestões do Sanchez sobre o `memreader.c`, explorando conceitos essenciais da linguagem C como `volatile`, `static`, declarações antecipadas de função (forward declarations) e o funcionamento de signal handlers.
 
 ",
       "url": "https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-1/",
@@ -121,11 +121,19 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
         const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
         
         if (contentArea) {
+          // Processa elementos <code> existentes
           const codeElements = contentArea.querySelectorAll('code:not(pre code)');
-          
           codeElements.forEach((codeEl) => {
             codeEl.classList.add('inline-code');
             codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
           });
         }
       }
@@ -193,11 +201,18 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
             },
             enter(data) {
               // Processamento imediato sem delays
-              processInlineCode();
-              setupBackLink();
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
               
               // Resolve instantaneamente
               return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
             }
           }]
         });
@@ -270,7 +285,7 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 <article class="py-4" itemscope itemtype="https://schema.org/BlogPosting">
   <header>
-    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Notas sobre sugestões - Parte 1</h1>
+    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Analisando sugestões no memreader.c - static, volatile e signal handlers em C</h1>
     
     <time class="text-base text-gray-300 block mb-4" datetime="2025-10-09" itemprop="datePublished">10-10-2025</time>
     
@@ -280,10 +295,18 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
           
         
           
-            <a href="/topicos/observabilidade" 
+            <a href="/topicos/linguagem c" 
                class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
                itemprop="keywords">
-              observabilidade
+              linguagem c
+            </a>
+          
+        
+          
+            <a href="/topicos/jornada observabilidade" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              jornada observabilidade
             </a>
           
         
@@ -292,9 +315,10 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   </header>
   
   <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
-    <p>Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.</p>
+    <p>Uma análise das sugestões do Sanchez sobre o <code>memreader.c</code>, explorando conceitos essenciais da linguagem C como <code>volatile</code>, <code>static</code>, declarações antecipadas de função (forward declarations) e o funcionamento de signal handlers.</p>
 <p>Meu código: <a href="https://github.com/matheusgb/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/master/memreader.c</a></p>
 <p>Mudanças sugeridas: <a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
+<hr>
 <h3>Entendendo e comparando o uso de static e volatile em <code>sig_atomic_t  stop</code>.</h3>
 <p><code>volatile</code>: A proposta inicial era lidar com sinais como <code>Ctrl+C</code> de forma segura, <s>mas a essa altura acho que nem faria sentido, tendo em vista que <code>Ctrl+C</code> interrompe o programa de qualquer forma</s>. A linha de raciocínio era indicar ao compilador que a variável poderia ser modificada “a qualquer momento”, então deveria ser lida antes de qualquer operação, evitando um possível efeito colateral de otimização onde o loop poderia nunca perceber a mudança feita pelo handler de sinal e rodar infinito.
 s

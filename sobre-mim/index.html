@@ -106,11 +106,19 @@
         const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
         
         if (contentArea) {
+          // Processa elementos <code> existentes
           const codeElements = contentArea.querySelectorAll('code:not(pre code)');
-          
           codeElements.forEach((codeEl) => {
             codeEl.classList.add('inline-code');
             codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
           });
         }
       }
@@ -178,11 +186,18 @@
             },
             enter(data) {
               // Processamento imediato sem delays
-              processInlineCode();
-              setupBackLink();
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
               
               // Resolve instantaneamente
               return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
             }
           }]
         });
@@ -260,7 +275,7 @@
 </nav>
 
 <section>
-  <p>Sou desenvolvedor de software com foco em back-end desde 2022 e atualmente atuo como <strong>Tech Lead na Taghos Tecnologia</strong>. Tenho experiência prática em todo o ciclo de vida de aplicações — da arquitetura à produção — com ênfase em desempenho, observabilidade e entrega de valor.</p>
+  <p>Sou desenvolvedor de software com foco em back-end desde 2022 e atualmente atuo como <strong>Tech Lead na Taghos Tecnologia</strong>. Tenho experiência prática em todo o ciclo de vida de aplicações, da arquitetura à produção, com ênfase em desempenho, observabilidade e entrega de valor.</p>
 <p>Minha stack envolve <strong>Go, Node.js, Python e Vue</strong>, além de infraestrutura com <strong>Docker, Redis, RabbitMQ, CI/CD, MongoDB, ClickHouse e PostgreSQL</strong>. Trabalho com <strong>arquitetura hexagonal, testes automatizados e boas práticas de engenharia de software</strong>, sempre buscando clareza técnica e impacto real no negócio.</p>
 <p>Acredito em <strong>autonomia, aprendizado contínuo e código bem projetado</strong> como base para construir soluções escaláveis e times mais fortes.</p>
 <p>📍 Rio de Janeiro, Brasil<br>

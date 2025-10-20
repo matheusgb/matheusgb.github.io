@@ -40,8 +40,13 @@
 <changefreq></changefreq>
 </url></p>
 <p><url>
-<loc><a href="https://matheusgb.github.io/topicos/observabilidade/" target="_blank" rel="noopener noreferrer">https://matheusgb.github.io/topicos/observabilidade/</a></loc>
+<loc><a href="https://matheusgb.github.io/topicos/ego/" target="_blank" rel="noopener noreferrer">https://matheusgb.github.io/topicos/ego/</a></loc>
 <lastmod>Sat Oct 18 2025 13:30:18 GMT-0300 (Brasilia Standard Time)</lastmod>
+<changefreq></changefreq>
+</url></p>
+<p><url>
+<loc><a href="https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/" target="_blank" rel="noopener noreferrer">https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/</a></loc>
+<lastmod>Sat Oct 18 2025 21:00:00 GMT-0300 (Brasilia Standard Time)</lastmod>
 <changefreq></changefreq>
 </url></p>
 </urlset>

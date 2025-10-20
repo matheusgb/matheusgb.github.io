@@ -106,11 +106,19 @@
         const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
         
         if (contentArea) {
+          // Processa elementos <code> existentes
           const codeElements = contentArea.querySelectorAll('code:not(pre code)');
-          
           codeElements.forEach((codeEl) => {
             codeEl.classList.add('inline-code');
             codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
           });
         }
       }
@@ -178,11 +186,18 @@
             },
             enter(data) {
               // Processamento imediato sem delays
-              processInlineCode();
-              setupBackLink();
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
               
               // Resolve instantaneamente
               return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
             }
           }]
         });
@@ -265,11 +280,46 @@
 
 <div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
-    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-3/">Notas sobre sugestões - Parte 3</a></span>
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/refatorando-statreader.c/">Refatorando statreader.c - aplicando lições do memreader.c para monitoramento de CPU</a></span>
+  </p>
+  <em class="text-base text-gray-300 block mb-4">19-10-2025</em>
+  <p class="text-lg text-white">
+Uma análise prática da refatoração do `statreader.c` aplicando as sugestões do Sanchez sobre o `memreader.c`. Explorando o `/proc/stat`, diferenças entre CPUs físicas e virtuais, significado de jiffies, e como transformar dados do kernel em observabilidade útil.
+
+</p>
+  
+  <div class="mt-4">
+    <div class="flex flex-wrap">
+      
+        
+      
+        
+          <a href="/topicos/linguagem c" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            linguagem c
+          </a>
+        
+      
+        
+          <a href="/topicos/jornada observabilidade" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            jornada observabilidade
+          </a>
+        
+      
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
+  <p class="mb-1">
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-3/">Notas sobre sugestões - Parte 3, o mito do “estado atual”</a></span>
   </p>
   <em class="text-base text-gray-300 block mb-4">16-10-2025</em>
   <p class="text-lg text-white">
-Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+Uma retratação sobre o que foi dito na parte 2: `open()` não revela o “estado atual” do arquivo, ele apenas oferece uma visão local e momentânea. Nesta parte, discuto essa confusão entre camadas, a noção de tempo no sistema e os próximos passos do projeto.
 
 </p>
   
@@ -279,8 +329,20 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
         
       
         
-          <a href="/topicos/observabilidade" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
-            observabilidade
+          <a href="/topicos/linguagem c" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            linguagem c
+          </a>
+        
+      
+        
+          <a href="/topicos/sistemas operacionais" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            sistemas operacionais
+          </a>
+        
+      
+        
+          <a href="/topicos/jornada observabilidade" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            jornada observabilidade
           </a>
         
       
@@ -294,11 +356,11 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
 
 <div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
-    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-2/">Notas sobre sugestões - Parte 2</a></span>
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-2/">Explorando o ELF e as seções de memória em C - Parte 2 das notas sobre o memreader.c</a></span>
   </p>
   <em class="text-base text-gray-300 block mb-4">11-10-2025</em>
   <p class="text-lg text-white">
-Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Nessa parte 2 das notas sobre o `memreader.c`, mergulho no formato binário `ELF` e nas seções de memória `.BSS`, `.DATA` e `.RODATA`. Também discuto como usar `nm` e `objdump` para inspecionar símbolos, além de entender a relação entre `signal handlers`, `nanosleep()` e chamadas POSIX como `open()` e `fopen()`.
 
 </p>
   
@@ -308,8 +370,20 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
         
       
         
-          <a href="/topicos/observabilidade" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
-            observabilidade
+          <a href="/topicos/linguagem c" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            linguagem c
+          </a>
+        
+      
+        
+          <a href="/topicos/sistemas operacionais" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            sistemas operacionais
+          </a>
+        
+      
+        
+          <a href="/topicos/jornada observabilidade" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            jornada observabilidade
           </a>
         
       
@@ -323,11 +397,11 @@ Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
 
 <div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
   <p class="mb-1">
-    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-1/">Notas sobre sugestões - Parte 1</a></span>
+    <span class="text-2xl sm:text-4xl font-bold text-white hover:text-gray-300 leading-tight"><a href="/posts/2025/10/notas-sobre-sugestoes-1/">Analisando sugestões no memreader.c - static, volatile e signal handlers em C</a></span>
   </p>
   <em class="text-base text-gray-300 block mb-4">10-10-2025</em>
   <p class="text-lg text-white">
-Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Uma análise das sugestões do Sanchez sobre o `memreader.c`, explorando conceitos essenciais da linguagem C como `volatile`, `static`, declarações antecipadas de função (forward declarations) e o funcionamento de signal handlers.
 
 </p>
   
@@ -337,8 +411,14 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
         
       
         
-          <a href="/topicos/observabilidade" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
-            observabilidade
+          <a href="/topicos/linguagem c" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            linguagem c
+          </a>
+        
+      
+        
+          <a href="/topicos/jornada observabilidade" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            jornada observabilidade
           </a>
         
       
@@ -356,13 +436,25 @@ Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
   </p>
   <em class="text-base text-gray-300 block mb-4">09-10-2025</em>
   <p class="text-lg text-white">
-Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.
+Após três anos desenvolvendo software, decidi explorar novos desafios: unir programação de baixo nível e física computacional. Este é o ponto de partida da minha jornada em direção ao CFD.
 
 </p>
   
   <div class="mt-4">
     <div class="flex flex-wrap">
       
+        
+      
+        
+          <a href="/topicos/ego" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            ego
+          </a>
+        
+      
+        
+          <a href="/topicos/física computacional" class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
+            física computacional
+          </a>
         
       
     </div>

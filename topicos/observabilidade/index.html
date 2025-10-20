@@ -106,11 +106,19 @@
         const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
         
         if (contentArea) {
+          // Processa elementos <code> existentes
           const codeElements = contentArea.querySelectorAll('code:not(pre code)');
-          
           codeElements.forEach((codeEl) => {
             codeEl.classList.add('inline-code');
             codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
           });
         }
       }
@@ -178,11 +186,18 @@
             },
             enter(data) {
               // Processamento imediato sem delays
-              processInlineCode();
-              setupBackLink();
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
               
               // Resolve instantaneamente
               return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
             }
           }]
         });
@@ -280,13 +295,13 @@
     <div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
       <p class="mb-1">
         <span class="text-2xl sm:text-4xl font-bold text-white leading-tight">
-          <a href="/posts/2025/10/notas-sobre-sugestoes-3/" class="hover:text-gray-300 no-underline">Notas sobre sugestões - Parte 3</a>
+          <a href="/posts/2025/10/notas-sobre-sugestoes-3/" class="hover:text-gray-300 no-underline">Notas sobre sugestões — Parte 3, o mito do “estado atual”</a>
         </span>
       </p>
       <em class="text-base text-gray-300 block mb-4">16-10-2025</em>
       
         <p class="text-lg text-white">
-Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+Uma retratação sobre o que foi dito na Parte 2: `open()` não revela o “estado atual” do arquivo — ele apenas oferece uma visão local e momentânea. Nesta parte, discuto essa confusão entre camadas, a noção de tempo no sistema e os próximos passos do projeto.
 
 </p>
       
@@ -304,71 +319,17 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
                 </a>
               
             
-          </div>
-        </div>
-      
-    </div>
-  
-
-  
-    <div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
-      <p class="mb-1">
-        <span class="text-2xl sm:text-4xl font-bold text-white leading-tight">
-          <a href="/posts/2025/10/notas-sobre-sugestoes-2/" class="hover:text-gray-300 no-underline">Notas sobre sugestões - Parte 2</a>
-        </span>
-      </p>
-      <em class="text-base text-gray-300 block mb-4">11-10-2025</em>
-      
-        <p class="text-lg text-white">
-Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
-
-</p>
-      
-      
-      
-        <div class="mt-4">
-          <div class="flex flex-wrap">
-            
               
-            
-              
-                <a href="/topicos/observabilidade" 
+                <a href="/topicos/sistemas operacionais" 
                    class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
-                  observabilidade
+                  sistemas operacionais
                 </a>
               
             
-          </div>
-        </div>
-      
-    </div>
-  
-
-  
-    <div class="py-6 px-6 mb-6 bg-gray-800 bg-opacity-50 rounded-lg">
-      <p class="mb-1">
-        <span class="text-2xl sm:text-4xl font-bold text-white leading-tight">
-          <a href="/posts/2025/10/notas-sobre-sugestoes-1/" class="hover:text-gray-300 no-underline">Notas sobre sugestões - Parte 1</a>
-        </span>
-      </p>
-      <em class="text-base text-gray-300 block mb-4">10-10-2025</em>
-      
-        <p class="text-lg text-white">
-Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
-
-</p>
-      
-      
-      
-        <div class="mt-4">
-          <div class="flex flex-wrap">
-            
               
-            
-              
-                <a href="/topicos/observabilidade" 
+                <a href="/topicos/linguagem c" 
                    class="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm hover:bg-gray-600 transition-colors mr-2 mb-1">
-                  observabilidade
+                  linguagem c
                 </a>
               
             

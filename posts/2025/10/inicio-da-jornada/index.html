@@ -35,7 +35,7 @@
     <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/inicio-da-jornada/">
     <meta property="og:title" content="Início da jornada - matheusgb">
     <meta property="og:description" content="
-Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.
+Após três anos desenvolvendo software, decidi explorar novos desafios: unir programação de baixo nível e física computacional. Este é o ponto de partida da minha jornada em direção ao CFD.
 
 ">
     <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -54,7 +54,7 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
     <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/inicio-da-jornada/">
     <meta name="twitter:title" content="Início da jornada - matheusgb">
     <meta name="twitter:description" content="
-Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.
+Após três anos desenvolvendo software, decidi explorar novos desafios: unir programação de baixo nível e física computacional. Este é o ponto de partida da minha jornada em direção ao CFD.
 
 ">
     <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -76,7 +76,7 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
       "name": "Início da jornada",
       "headline": "Início da jornada",
       "description": "
-Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.
+Após três anos desenvolvendo software, decidi explorar novos desafios: unir programação de baixo nível e física computacional. Este é o ponto de partida da minha jornada em direção ao CFD.
 
 ",
       "url": "https://matheusgb.github.io/posts/2025/10/inicio-da-jornada/",
@@ -121,11 +121,19 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
         const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
         
         if (contentArea) {
+          // Processa elementos <code> existentes
           const codeElements = contentArea.querySelectorAll('code:not(pre code)');
-          
           codeElements.forEach((codeEl) => {
             codeEl.classList.add('inline-code');
             codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
           });
         }
       }
@@ -193,11 +201,18 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
             },
             enter(data) {
               // Processamento imediato sem delays
-              processInlineCode();
-              setupBackLink();
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
               
               // Resolve instantaneamente
               return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
             }
           }]
         });
@@ -279,12 +294,30 @@ Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma a
         
           
         
+          
+            <a href="/topicos/ego" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              ego
+            </a>
+          
+        
+          
+            <a href="/topicos/física computacional" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              física computacional
+            </a>
+          
+        
       </nav>
     
   </header>
   
   <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
-    <p>Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.</p>
+    <p>Após três anos desenvolvendo software, decidi explorar novos desafios: unir programação de baixo nível e física computacional. Este é o ponto de partida da minha jornada em direção ao CFD.</p>
+<hr>
+<p>Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.</p>
 <p>No total são 4 anos e alguns poucos meses mexendo com programação, e comecei a me sentir estagnado, então, comecei a arrumar problema pra cabeça 🤭.</p>
 <p>Há um tempo cresceu uma vontade em mim de enriquecer o poder de criar software com alguma outra área, e cismei de entrar no caminho da física computacional, mais específicamente <a href="https://pt.wikipedia.org/wiki/Fluidodin%C3%A2mica_computacional" target="_blank" rel="noopener noreferrer">CFD</a>.</p>
 <p>Pra isso, preciso aprender algumas coisas:</p>

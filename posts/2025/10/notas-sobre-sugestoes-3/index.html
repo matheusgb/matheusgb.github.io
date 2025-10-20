@@ -33,9 +33,9 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-3/">
-    <meta property="og:title" content="Notas sobre sugestões - Parte 3 - matheusgb">
+    <meta property="og:title" content="Notas sobre sugestões - Parte 3, o mito do “estado atual” - matheusgb">
     <meta property="og:description" content="
-Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+Uma retratação sobre o que foi dito na parte 2: `open()` não revela o “estado atual” do arquivo, ele apenas oferece uma visão local e momentânea. Nesta parte, discuto essa confusão entre camadas, a noção de tempo no sistema e os próximos passos do projeto.
 
 ">
     <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -52,9 +52,9 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-3/">
-    <meta name="twitter:title" content="Notas sobre sugestões - Parte 3 - matheusgb">
+    <meta name="twitter:title" content="Notas sobre sugestões - Parte 3, o mito do “estado atual” - matheusgb">
     <meta name="twitter:description" content="
-Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+Uma retratação sobre o que foi dito na parte 2: `open()` não revela o “estado atual” do arquivo, ele apenas oferece uma visão local e momentânea. Nesta parte, discuto essa confusão entre camadas, a noção de tempo no sistema e os próximos passos do projeto.
 
 ">
     <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -73,10 +73,10 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
     {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "name": "Notas sobre sugestões - Parte 3",
-      "headline": "Notas sobre sugestões - Parte 3",
+      "name": "Notas sobre sugestões - Parte 3, o mito do “estado atual”",
+      "headline": "Notas sobre sugestões - Parte 3, o mito do “estado atual”",
       "description": "
-Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+Uma retratação sobre o que foi dito na parte 2: `open()` não revela o “estado atual” do arquivo, ele apenas oferece uma visão local e momentânea. Nesta parte, discuto essa confusão entre camadas, a noção de tempo no sistema e os próximos passos do projeto.
 
 ",
       "url": "https://matheusgb.github.io/posts/2025/10/notas-sobre-sugestoes-3/",
@@ -121,11 +121,19 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
         const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
         
         if (contentArea) {
+          // Processa elementos <code> existentes
           const codeElements = contentArea.querySelectorAll('code:not(pre code)');
-          
           codeElements.forEach((codeEl) => {
             codeEl.classList.add('inline-code');
             codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
           });
         }
       }
@@ -193,11 +201,18 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
             },
             enter(data) {
               // Processamento imediato sem delays
-              processInlineCode();
-              setupBackLink();
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
               
               // Resolve instantaneamente
               return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
             }
           }]
         });
@@ -270,7 +285,7 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
 
 <article class="py-4" itemscope itemtype="https://schema.org/BlogPosting">
   <header>
-    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Notas sobre sugestões - Parte 3</h1>
+    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Notas sobre sugestões - Parte 3, o mito do “estado atual”</h1>
     
     <time class="text-base text-gray-300 block mb-4" datetime="2025-10-15" itemprop="datePublished">16-10-2025</time>
     
@@ -280,10 +295,26 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
           
         
           
-            <a href="/topicos/observabilidade" 
+            <a href="/topicos/linguagem c" 
                class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
                itemprop="keywords">
-              observabilidade
+              linguagem c
+            </a>
+          
+        
+          
+            <a href="/topicos/sistemas operacionais" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              sistemas operacionais
+            </a>
+          
+        
+          
+            <a href="/topicos/jornada observabilidade" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              jornada observabilidade
             </a>
           
         
@@ -292,9 +323,10 @@ Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e 
   </header>
   
   <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
-    <p>Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.</p>
+    <p>Uma retratação sobre o que foi dito na parte 2: <code>open()</code> não revela o “estado atual” do arquivo, ele apenas oferece uma visão local e momentânea. Nesta parte, discuto essa confusão entre camadas, a noção de tempo no sistema e os próximos passos do projeto.</p>
 <p>Meu código: <a href="https://github.com/matheusgb/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/matheusgb/readers/blob/master/memreader.c</a></p>
 <p>Mudanças sugeridas: <a href="https://github.com/rnsanchez/readers/blob/master/memreader.c" target="_blank" rel="noopener noreferrer">https://github.com/rnsanchez/readers/blob/master/memreader.c</a></p>
+<hr>
 <h3>Retratação sobre <code>open()</code></h3>
 <p>Ao final da parte 2, eu disse:</p>
 <blockquote>
