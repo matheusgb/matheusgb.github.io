@@ -1,17 +1,18 @@
 ---
-title: Notas sobre sugestões - Parte 1
+title: Analisando sugestões no memreader.c - static, volatile e signal handlers em C
 date: 2025-10-10
-tags: [observabilidade]
-# published: false
+tags: [linguagem c, jornada observabilidade]
 ---
 
-Parte 1 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Uma análise das sugestões do Sanchez sobre o `memreader.c`, explorando conceitos essenciais da linguagem C como `volatile`, `static`, declarações antecipadas de função (forward declarations) e o funcionamento de signal handlers.
 
 <!-- excerpt -->
 
 Meu código: https://github.com/matheusgb/readers/blob/master/memreader.c
 
 Mudanças sugeridas: https://github.com/rnsanchez/readers/blob/master/memreader.c
+
+---
 
 ### Entendendo e comparando o uso de static e volatile em `sig_atomic_t  stop`.
 

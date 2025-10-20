@@ -1,16 +1,18 @@
 ---
-title: Notas sobre sugestões - Parte 3
+title: Notas sobre sugestões - Parte 3, o mito do “estado atual”
 date: 2025-10-16
-tags: [observabilidade]
+tags: [linguagem c, sistemas operacionais, jornada observabilidade]
 ---
 
-Parte 3 da análise e síntese das sugestões do Sanchez sobre o memreader.c, e retratando algumas afirmações feitas na Parte 2.
+Uma retratação sobre o que foi dito na parte 2: `open()` não revela o “estado atual” do arquivo, ele apenas oferece uma visão local e momentânea. Nesta parte, discuto essa confusão entre camadas, a noção de tempo no sistema e os próximos passos do projeto.
 
 <!-- excerpt -->
 
 Meu código: https://github.com/matheusgb/readers/blob/master/memreader.c
 
 Mudanças sugeridas: https://github.com/rnsanchez/readers/blob/master/memreader.c
+
+---
 
 ### Retratação sobre `open()`
 

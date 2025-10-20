@@ -1,16 +1,18 @@
 ---
-title: Notas sobre sugestões - Parte 2
+title: Explorando o ELF e as seções de memória em C - Parte 2 das notas sobre o memreader.c
 date: 2025-10-11
-tags: [observabilidade]
+tags: [linguagem c, sistemas operacionais, jornada observabilidade]
 ---
 
-Parte 2 da análise e síntese das sugestões do Sanchez sobre o memreader.c.
+Nessa parte 2 das notas sobre o `memreader.c`, mergulho no formato binário `ELF` e nas seções de memória `.BSS`, `.DATA` e `.RODATA`. Também discuto como usar `nm` e `objdump` para inspecionar símbolos, além de entender a relação entre `signal handlers`, `nanosleep()` e chamadas POSIX como `open()` e `fopen()`.
 
 <!-- excerpt -->
 
 Meu código: https://github.com/matheusgb/readers/blob/master/memreader.c
 
 Mudanças sugeridas: https://github.com/rnsanchez/readers/blob/master/memreader.c
+
+---
 
 ### Conhecendo um pouco sobre `ELF` e seções de memória `.BSS`, `.DATA` e `.RODATA`
 

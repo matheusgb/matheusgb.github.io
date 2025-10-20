@@ -1,11 +1,16 @@
 ---
 title: Início da jornada
 date: 2025-10-09
+tags: [ego, física computacional]
+---
+
+Após três anos desenvolvendo software, decidi explorar novos desafios: unir programação de baixo nível e física computacional. Este é o ponto de partida da minha jornada em direção ao CFD.
+
+<!-- excerpt -->
+
 ---
 
 Trabalho com desenvolvimento de software tem três anos, antes disso, tive uma ano de estudo onde aprendi o necessário pra conseguir colaborar incialmente com algo.
-
-<!-- excerpt -->
 
 No total são 4 anos e alguns poucos meses mexendo com programação, e comecei a me sentir estagnado, então, comecei a arrumar problema pra cabeça 🤭.
 
