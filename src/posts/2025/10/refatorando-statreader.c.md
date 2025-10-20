@@ -68,7 +68,7 @@ processes 7460
 
 - Por qual motivo tem 32 CPU's se meu processador tem 16 cores?
 - O que cada coluna significa?
-- O que é `intr`, `ctxt` e `btime`? (`processes` é meio "auto conclusivo", mas ainda assim não tive clareza do que significava).
+- O que é `intr`, `ctxt` e `btime`? (`processes` é meio autoexplicativo, mas ainda assim não tive clareza do que significava).
 - Esses números nas colunas representam o que exatamente?
 - Como uso isso de forma útil para observar o uso de recursos da máquina?
 
