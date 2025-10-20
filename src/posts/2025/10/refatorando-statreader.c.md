@@ -126,7 +126,7 @@ Explicando melhor:
 
 ---
 
-### "O que é `intr`, `ctxt` e `btime`? (`processes` é meio "auto conclusivo", mas ainda assim não tive clareza do que significava)"
+### "O que é `intr`, `ctxt` e `btime`? (`processes` é meio autoexplicativo, mas ainda assim não tive clareza do que significava)"
 
 _Obs.: Esses campos, ainda não utilizo no programa `statreader.c`, mas será adicionado no futuro._
 
