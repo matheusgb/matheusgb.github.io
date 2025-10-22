@@ -1,7 +1,7 @@
 ---
 title: Refatorando statreader.c - aplicando lições do memreader.c para monitoramento de CPU
 date: 2025-10-19
-tags: [linguagem c, jornada observabilidade]
+tags: [linguagem c, sistemas operacionais, jornada observabilidade]
 ---
 
 Uma análise prática da refatoração do `statreader.c` aplicando as sugestões do Sanchez sobre o `memreader.c`. Explorando o `/proc/stat`, diferenças entre CPUs físicas e virtuais, significado de jiffies, e como transformar dados do kernel em observabilidade útil.
@@ -259,3 +259,32 @@ clock_gettime(CLOCK_REALTIME, &ts); // OK
 ```
 
 O motivo pelo qual usei foi por conta de um erro estético que o vscode estava apresentando em `CLOCK_REALTIME`, quando adicionei `_POSIX_C_SOURCE` esse erro sumiu. Antes o programa já compilava corretamente, a adição foi desnecessária, e implica a perigos também desnecessários.
+
+---
+
+### Errata - Correções sugeridas por R. Sanchez
+
+### 1. **system**: Tempo gasto dentro do kernel, executando chamadas de sistema (syscalls), I/O, ~~alocação de memória~~, etc.
+
+**Correção**:
+O kernel **não realiza alocação de memória** no sentido tradicional (como o `malloc` do espaço de usuário).
+O que ele faz é **mapear regiões de memória** por meio de chamadas como `mmap()`, que estabelecem a correspondência entre endereços virtuais e páginas físicas ou arquivos.
+
+Esses mapeamentos podem ser:
+
+- **Anônimos**: usados para alocação dinâmica (sem associação a arquivo), base do heap de processos.
+- **Baseados em arquivo**: usados para mapear arquivos inteiros na memória (como executáveis, bibliotecas dinâmicas ou memória compartilhada via `MAP_SHARED`).
+
+Após o `mmap()`, a **gerência efetiva** dessa memória (fragmentação, liberação, realocação etc.) é feita **no espaço de usuário**, por bibliotecas como `libc`, `jemalloc` ou `tcmalloc`.
+O kernel apenas garante o isolamento, proteção e paginação do espaço virtual, **sem participar do gerenciamento interno** dessa área.
+
+---
+
+### 2. **softirq**: ~~Mostra custo de tratamento de rede e tarefas assíncronas~~.
+
+**Correção**:
+O campo **`softirq`** é **específico para o processamento de rede** e algumas rotinas críticas de baixo nível.
+O termo “tarefas assíncronas” é impreciso, pois **o kernel inteiro é estruturado de forma assíncrona**, com múltiplas _worker threads_ internas executando operações em paralelo.
+
+Essas _worker threads_ (como as do _kworker_) são entidades do kernel que **processam filas de tarefas pendentes** — por exemplo, limpeza de caches, escrita assíncrona em disco, ou manipulação de pacotes de rede — sem bloquear o contexto de interrupção que as gerou.
+Assim, elas permitem que o kernel **delegue trabalho pesado ou demorado** para execução posterior, fora do caminho crítico da interrupção, mantendo o sistema responsivo e eficiente.
