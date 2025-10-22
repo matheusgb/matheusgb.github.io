@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+  	<meta name='viewport' content='width=device-width'>
+    
+    <!-- Security Headers (only ones that work in meta tags) -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <!-- Otimizações de rendering -->
+    <meta name="color-scheme" content="dark">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FR0EREBNL3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-FR0EREBNL3');
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/img/blog.png">
+    <link rel="shortcut icon" type="image/png" href="/assets/img/blog.png">
+
+    <title>matheusgb</title>
+    <meta name='description' content=Buscando ser menos leigo que ontem>
+    <meta name="theme-color" content="#1c1c1c"/>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/correcoes-sugeridas-statreader.c/">
+    <meta property="og:title" content="Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c - matheusgb">
+    <meta property="og:description" content="
+Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.
+
+">
+    <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="matheusgb">
+    <meta property="og:locale" content="pt_BR">
+    
+    <meta property="article:author" content="Matheus Gomes">
+    <meta property="article:published_time" content="2025-10-21">
+    <meta property="article:section" content="Blog">
+    
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/correcoes-sugeridas-statreader.c/">
+    <meta name="twitter:title" content="Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c - matheusgb">
+    <meta name="twitter:description" content="
+Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.
+
+">
+    <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
+    <meta name="twitter:creator" content="@matheusgb">
+    <meta name="twitter:site" content="@matheusgb">
+
+    <!-- Meta tags adicionais -->
+    <meta name="author" content="Matheus Gomes">
+    <meta name="robots" content="index, follow">
+    <meta name="generator" content="Eleventy v3.1.2">
+    <meta name="language" content="pt-BR">
+    <link rel="canonical" href="https://matheusgb.github.io/posts/2025/10/correcoes-sugeridas-statreader.c/">
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "name": "Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c",
+      "headline": "Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c",
+      "description": "
+Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.
+
+",
+      "url": "https://matheusgb.github.io/posts/2025/10/correcoes-sugeridas-statreader.c/",
+      "author": {
+        "@type": "Person",
+        "name": "Matheus Gomes",
+        "url": "https://matheusgb.github.io"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Matheus Gomes",
+        "url": "https://matheusgb.github.io"
+      },
+      "datePublished": "2025-10-21",
+      "dateModified": "2025-10-21"
+    }
+    </script>
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Critical resources preload -->
+    <link rel="preload" href="/assets/img/top-img.webp" as="image" type="image/webp" fetchpriority="high">
+    <link rel="preload" href="/assets/styles/tailwind.css" as="style">
+    <link rel="preload" href="/assets/styles/index.css" as="style">
+
+    <!-- Stylesheets in order of importance -->
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="/assets/styles/tailwind.css" rel="stylesheet" />
+    <link href="/assets/styles/index.css" rel="stylesheet" />
+    <script>
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+      
+      // Processa código inline
+      function processInlineCode() {
+        const contentArea = document.querySelector('.prose') || document.querySelector('main') || document.body;
+        
+        if (contentArea) {
+          // Processa elementos <code> existentes
+          const codeElements = contentArea.querySelectorAll('code:not(pre code)');
+          codeElements.forEach((codeEl) => {
+            codeEl.classList.add('inline-code');
+            codeEl.style.setProperty('content', 'none', 'important');
+          });
+          
+          // Processa texto com crases nos excerpts (página index)
+          const excerptElements = contentArea.querySelectorAll('p');
+          excerptElements.forEach((p) => {
+            if (p.innerHTML.includes('`')) {
+              p.innerHTML = p.innerHTML.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            }
+          });
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', processInlineCode);
+    </script>
+    
+    <!-- Barba.js para navegação SPA -->
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script>
+      // Função para configurar link de volta
+      function setupBackLink() {
+        const backLink = document.getElementById('back-link');
+        if (backLink) {
+          const previousPage = sessionStorage.getItem('previousPage');
+          const referrer = document.referrer;
+          
+          // Prioriza sessionStorage (navegação via Barba.js)
+          let origin = previousPage;
+          
+          // Se não há sessionStorage, usa referrer (primeiro acesso)
+          if (!origin && referrer) {
+            const referrerUrl = new URL(referrer);
+            origin = referrerUrl.pathname;
+          }
+          
+          
+          if (origin === '/' || origin === '/index.html') {
+            backLink.href = '/';
+            backLink.innerHTML = '← Voltar para Posts';
+          } else if (origin === '/topicos' || origin === '/topicos/') {
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          } else {
+            // Padrão se não conseguir detectar
+            backLink.href = '/topicos';
+            backLink.innerHTML = '← Voltar para Tópicos';
+          }
+        }
+      }
+      
+      // Inicialização após DOM estar pronto
+      document.addEventListener('DOMContentLoaded', function() {
+        // Configura link de volta na primeira carga
+        setupBackLink();
+        
+        // Inicializa Barba.js
+        barba.init({
+          // Configuração mais robusta para interceptar links
+          prevent: ({ el }) => {
+            // Não intercepta links externos ou com target="_blank"
+            return el.getAttribute('target') === '_blank' || 
+                   el.getAttribute('href').startsWith('http') ||
+                   el.getAttribute('href').startsWith('mailto:');
+          },
+          
+          transitions: [{
+            name: 'instant-transition',
+            leave(data) {
+              // Armazena a página atual antes de sair
+              sessionStorage.setItem('previousPage', data.current.url.path);
+              
+              // Sem transição - instantâneo
+              return Promise.resolve();
+            },
+            enter(data) {
+              // Processamento imediato sem delays
+              // Garante que o DOM esteja pronto antes de processar
+              setTimeout(() => {
+                processInlineCode();
+                setupBackLink();
+              }, 0);
+              
+              // Resolve instantaneamente
+              return Promise.resolve();
+            },
+            after(data) {
+              // Garantia adicional de processamento após a transição
+              processInlineCode();
+            }
+          }]
+        });
+        
+      });
+    </script>
+  </head>
+
+  <body class="dark:text-white font-serif" style="background-color: #1c1c1c;">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">Pular para o conteúdo principal</a>
+    
+    <!-- Header with site banner -->
+    <header class="w-full" role="banner">
+      <div class="w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+        <img src="/assets/img/top-img.webp" 
+             alt="Imagem de cabeçalho do blog do Matheus Gomes - desenvolvedor de software"
+             class="blog-header-image"
+             loading="eager"
+             fetchpriority="high"
+             width="672"
+             height="123"
+             style="height: 123px; width: 100%; object-fit: cover; 
+                    background-color: #2d3748; 
+                    background-position: center; 
+                    background-size: 100% auto;
+                    opacity: 1;
+                    transition: opacity 0.1s ease-out;">
+      </div>
+    </header>
+    
+    <div data-barba="wrapper">
+      <div data-barba="container">
+        <main id="main-content" role="main">
+          
+<div class="min-h-screen flex flex-col">
+
+<main class="flex-1 w-10/12 max-w-screen-sm md:max-w-screen-md mx-auto">
+
+  
+<nav role="navigation" aria-label="Navegação principal">
+  <ul class="flex justify-between items-center py-2 border-b-2 mb-6 text-base sm:text-lg text-white">
+    <div class="flex space-x-3 sm:space-x-6" role="list">
+      <li><a href="/" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Posts</a></li>
+      <li><a href="/topicos" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Tópicos</a></li>
+      <li><a href="/sobre-mim" class="hover:text-gray-300 whitespace-nowrap" aria-current="false">Sobre mim</a></li>
+    </div>
+    <div class="flex items-center space-x-3 sm:space-x-4" role="list" aria-label="Links de redes sociais">
+      
+        <li>
+          <a href="https://github.com/matheusgb" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity" aria-label="GitHub do Matheus Gomes (abre em nova aba)">
+            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 0.5C5.648 0.5 0.5 5.648 0.5 12c0 5.081 3.293 9.395 7.863 10.923.575.105.785-.25.785-.555 0-.274-.01-1.002-.015-1.967-3.198.695-3.875-1.541-3.875-1.541-.523-1.329-1.277-1.684-1.277-1.684-1.044-.714.079-.699.079-.699 1.155.081 1.763 1.186 1.763 1.186 1.026 1.758 2.692 1.25 3.35.956.104-.744.401-1.25.73-1.538-2.555-.29-5.24-1.278-5.24-5.688 0-1.257.45-2.285 1.186-3.092-.119-.29-.514-1.46.112-3.042 0 0 .966-.31 3.168 1.181.92-.256 1.904-.384 2.888-.389.98.005 1.968.133 2.888.389 2.202-1.491 3.168-1.181 3.168-1.181.626 1.582.231 2.752.112 3.042.737.807 1.186 1.835 1.186 3.092 0 4.42-2.69 5.394-5.25 5.678.413.356.781 1.059.781 2.135 0 1.54-.014 2.785-.014 3.164 0 .309.209.665.79.552C20.213 21.39 23.5 17.078 23.5 12c0-6.352-5.148-11.5-11.5-11.5z"/>
+            </svg>
+          </a>
+        </li>
+      
+      
+        <li>
+          <a href="https://www.linkedin.com/in/matheusgb/" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity" aria-label="LinkedIn do Matheus Gomes (abre em nova aba)">
+            <svg width="18" height="18" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+        </li>
+      
+    </div>
+  </ul>
+</nav>
+
+<article class="py-4" itemscope itemtype="https://schema.org/BlogPosting">
+  <header>
+    <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-1" itemprop="headline">Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c</h1>
+    
+    <time class="text-base text-gray-300 block mb-4" datetime="2025-10-21" itemprop="datePublished">22-10-2025</time>
+    
+    
+      <nav class="flex flex-wrap gap-2 mb-6" aria-label="Tags do post">
+        
+          
+        
+          
+            <a href="/topicos/linguagem c" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              linguagem c
+            </a>
+          
+        
+          
+            <a href="/topicos/sistemas operacionais" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              sistemas operacionais
+            </a>
+          
+        
+          
+            <a href="/topicos/jornada observabilidade" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              jornada observabilidade
+            </a>
+          
+        
+      </nav>
+    
+  </header>
+  
+  <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
+    <p>Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.</p>
+<hr>
+<h3>Errata sobre considerações feitas no <a href="https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/" target="_blank" rel="noopener noreferrer">post anterior</a></h3>
+<h3>1. <em>system</em>:</h3>
+<blockquote>
+<p>Tempo gasto dentro do kernel, executando chamadas de sistema (syscalls), I/O, <em>alocação de memória</em>, etc.</p>
+</blockquote>
+<p><em>Correção</em>:
+O kernel <em>não realiza alocação de memória</em> no sentido tradicional (como o <code>malloc</code> do espaço de usuário).
+O que ele faz é <em>mapear regiões de memória</em> por meio de chamadas como <code>mmap()</code>, que estabelecem a correspondência entre endereços virtuais e páginas físicas ou arquivos.</p>
+<p>Esses mapeamentos podem ser:</p>
+<ul>
+<li><em>Anônimos</em>: usados para alocação dinâmica (sem associação a arquivo), base do heap de processos. É como pegar uma folha em branco pra anotar algo temporário. Não é salva em lugar nenhum, quando joga fora, o conteúdo se perde.</li>
+<li><em>Baseados em arquivo</em>: usados para mapear arquivos inteiros na memória (como executáveis, bibliotecas dinâmicas ou memória compartilhada via <code>MAP_SHARED</code>). Reserva espaço na memória que espelha um arquivo existente no disco. É como abrir um livro físico sobre a mesa, você lê e escreve direto nas páginas. O kernel cuida pra trazer as páginas do livro pro seu alcance quando você precisa delas.</li>
+</ul>
+<p>Após o <code>mmap()</code>, a <em>gerência efetiva</em> dessa memória (fragmentação, liberação, realocação etc.) é feita <em>no espaço de usuário</em>, por bibliotecas como <code>libc</code>, <code>jemalloc</code> ou <code>tcmalloc</code>.
+O kernel apenas garante o isolamento, proteção e paginação do espaço virtual, <em>sem participar do gerenciamento interno</em> dessa área.</p>
+<p>Se entendi corretamente: o <code>mmap()</code> cria o mapeamento virtual (a reserva de endereços), o <code>user space</code> escreve e lê dentro desse espaço, mas quem traz as páginas reais, seja uma página em branco (no caso anônimo) ou o conteúdo do arquivo (no caso baseado em arquivo) é o kernel, quando o processo acessa pela primeira vez.</p>
+<h4>Sobre MAP_SHARED (no mmap()):</h4>
+<p>Quando você usamos <code>mmap()</code> para mapear um arquivo na memória, você diz como quer que esse mapeamento se comporte. Um dos principais flags é o <code>MAP_SHARED</code>.</p>
+<p>Exemplo:
+Vamos imaginar que dois processos querem “abrir o mesmo livro” (um arquivo) e trabalhar nele:</p>
+<p>Se usa <code>MAP_SHARED</code>,</p>
+<ul>
+<li>Os dois estão literalmente vendo e escrevendo nas mesmas páginas do livro.
+Ou seja, qualquer modificação feita na memória é refletida no arquivo e visível para outros processos que também o mapearam com MAP_SHARED.</li>
+</ul>
+<p>Se usa <code>MAP_PRIVATE</code>,</p>
+<ul>
+<li>Cada processo ganha uma cópia particular das páginas.
+Quando ele altera algo, é como se escrevesse em uma fotocópia do livro, a alteração não vai para o arquivo original, nem aparece para outros processos.</li>
+</ul>
+<h4>Uma analogia em JavaScript sobre <code>MAP_PRIVATE</code> e <code>MAP_SHARED</code> que faz sentido na minha cabeça:</h4>
+<pre class="language-js"><code class="language-js"><span class="token comment">// MAP_SHARED</span><br><span class="token keyword">let</span> array1 <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> array2 <span class="token operator">=</span> array1<span class="token punctuation">;</span> <span class="token comment">// outra variável aponta pro mesmo array</span><br><br>array1<span class="token punctuation">.</span><span class="token function">reverse</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// inverte a ordem</span><br><br>console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>array2<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// [3,2,1] → mudança visível</span></code></pre>
+<pre class="language-js"><code class="language-js"><span class="token comment">// MAP_PRIVATE</span><br><span class="token keyword">let</span> array1 <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> array2 <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token operator">...</span>array1<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">// copia do array</span><br><br>array1<span class="token punctuation">.</span><span class="token function">reverse</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><br>console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>array2<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// [1,2,3] → mudança não afeta a cópia</span></code></pre>
+<h4>Sobre Espaço de usuário (user space)</h4>
+<p>Imaginando que o sistema operacional é um prédio com dois andares:</p>
+<ul>
+<li>
+<p>Andar de baixo (kernel):
+Com acesso total ao hardware (memória física, disco, CPU, etc). Só o kernel pode, por exemplo, falar diretamente com a RAM, as placas de rede, o disco…</p>
+</li>
+<li>
+<p>Andar de cima (user space):
+Onde rodam os programas comuns: navegador, editor de texto, etc…
+Esses programas não podem acessar diretamente o hardware, só pedem “permissão” ao kernel através de syscalls (como read(), write(), mmap(), open(), etc).</p>
+</li>
+</ul>
+<p>O espaço de usuário é a região de memória onde o programa roda isolado do kernel.</p>
+<hr>
+<h3>2. <em>softirq</em>:</h3>
+<blockquote>
+<p>Mostra custo de tratamento de rede e tarefas assíncronas.</p>
+</blockquote>
+<p><em>Correção</em>:
+O campo <strong>softirq</strong> é <em>específico para o processamento de rede</em> e algumas rotinas críticas de baixo nível.
+O termo “tarefas assíncronas” é impreciso, pois <em>o kernel inteiro é estruturado de forma assíncrona</em>, com múltiplas worker threads internas executando operações em paralelo.</p>
+<p>Essas worker threads são entidades do kernel que <em>processam filas de tarefas pendentes</em>. Por exemplo: limpeza de caches, escrita assíncrona em disco, ou manipulação de pacotes de rede, sem bloquear o contexto de interrupção que as gerou.
+Assim, elas permitem que o kernel <em>delegue trabalho pesado ou demorado</em> para execução posterior, fora do caminho crítico da interrupção, mantendo o sistema responsivo e eficiente.</p>
+<p>Exemplo de fluxo: <code>[Hardware dispara evento] → [Contexto de interrupção no kernel: captura e registra rapidamente] → [Delegação para worker thread] → [Worker thread processa tarefa pesada: limpeza de cache / escrita assíncrona / manipulação de pacotes] → [Tarefa concluída, kernel continua responsivo]</code></p>
+<hr>
+<h3>Devaneios sobre <code>nm</code>, <code>objdump</code> e <code>mmap</code></h3>
+<hr>
+<ol>
+<li><code>nm</code> e <code>objdump</code></li>
+</ol>
+<p>Eles mostram como o binário está estruturado, ou seja, como o programa foi “montado” antes de ser carregado pelo kernel.</p>
+<p><code>nm</code>: lista símbolos (funções, variáveis globais, seções).</p>
+<p><code>objdump -h</code> mostra as seções do <code>ELF</code>: <code>.text</code>, <code>.data</code>, <code>.bss</code>, <code>.rodata</code>, etc.</p>
+<ol start="2">
+<li><code>mmap</code> e <code>malloc</code></li>
+</ol>
+<p>Esses entram quando o binário já está em execução, o kernel e a libc “montam o prédio” e passam a alocar/apontar regiões de memória reais:</p>
+<p>O loader do kernel usa mmap() para carregar:</p>
+<ul>
+<li>.text (seção do código em binário),</li>
+<li>.data, .bss,</li>
+<li>bibliotecas dinâmicas,</li>
+<li>stack, heap etc.</li>
+</ul>
+<p>Depois disso, o programa pode chamar <code>malloc()</code>, que internamente:</p>
+<ul>
+<li>Usa <code>brk()</code> (para crescer o heap) ou</li>
+<li><code>mmap()</code> (para alocar grandes blocos)</li>
+</ul>
+<h4>Analogia:</h4>
+<p><code>nm</code>, <code>objdump</code>: Planta do prédio no papel (binário no disco)
+<code>mmap()</code>: Kernel construindo os cômodos (endereços de memória)
+<code>malloc()</code>: Programa colocando móveis/dados (alocação dinâmica)</p>
+
+  </div>
+  
+  <meta itemprop="author" content="Matheus Gomes">
+  <meta itemprop="publisher" content="Matheus Gomes">
+  <meta itemprop="dateModified" content="2025-10-21">
+</article>
+
+</main>
+
+</div>
+
+        </main>
+      </div>
+    </div>
+    
+  </body>
+</html>

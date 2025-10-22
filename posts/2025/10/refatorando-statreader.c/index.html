@@ -303,6 +303,14 @@ Uma análise prática da refatoração do `statreader.c` aplicando as sugestões
           
         
           
+            <a href="/topicos/sistemas operacionais" 
+               class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
+               itemprop="keywords">
+              sistemas operacionais
+            </a>
+          
+        
+          
             <a href="/topicos/jornada observabilidade" 
                class="inline-block bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-600 transition-colors"
                itemprop="keywords">
@@ -485,6 +493,26 @@ processes 7460
 <pre class="language-c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">_POSIX_C_SOURCE</span> <span class="token expression"><span class="token number">199506L</span></span></span><br><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;time.h></span></span><br><br><span class="token keyword">struct</span> <span class="token class-name">timespec</span> ts<span class="token punctuation">;</span><br><span class="token function">clock_gettime</span><span class="token punctuation">(</span>CLOCK_REALTIME<span class="token punctuation">,</span> <span class="token operator">&amp;</span>ts<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// ERRO: função não declarada</span></code></pre>
 <pre class="language-c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">_POSIX_C_SOURCE</span> <span class="token expression"><span class="token number">199309L</span></span></span><br><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;time.h></span></span><br><br><span class="token keyword">struct</span> <span class="token class-name">timespec</span> ts<span class="token punctuation">;</span><br><span class="token function">clock_gettime</span><span class="token punctuation">(</span>CLOCK_REALTIME<span class="token punctuation">,</span> <span class="token operator">&amp;</span>ts<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// OK</span></code></pre>
 <p>O motivo pelo qual usei foi por conta de um erro estético que o vscode estava apresentando em <code>CLOCK_REALTIME</code>, quando adicionei <code>_POSIX_C_SOURCE</code> esse erro sumiu. Antes o programa já compilava corretamente, a adição foi desnecessária, e implica a perigos também desnecessários.</p>
+<hr>
+<h3>Errata - Correções sugeridas por R. Sanchez</h3>
+<h3>1. <strong>system</strong>: Tempo gasto dentro do kernel, executando chamadas de sistema (syscalls), I/O, <s>alocação de memória</s>, etc.</h3>
+<p><strong>Correção</strong>:
+O kernel <strong>não realiza alocação de memória</strong> no sentido tradicional (como o <code>malloc</code> do espaço de usuário).
+O que ele faz é <strong>mapear regiões de memória</strong> por meio de chamadas como <code>mmap()</code>, que estabelecem a correspondência entre endereços virtuais e páginas físicas ou arquivos.</p>
+<p>Esses mapeamentos podem ser:</p>
+<ul>
+<li><strong>Anônimos</strong>: usados para alocação dinâmica (sem associação a arquivo), base do heap de processos.</li>
+<li><strong>Baseados em arquivo</strong>: usados para mapear arquivos inteiros na memória (como executáveis, bibliotecas dinâmicas ou memória compartilhada via <code>MAP_SHARED</code>).</li>
+</ul>
+<p>Após o <code>mmap()</code>, a <strong>gerência efetiva</strong> dessa memória (fragmentação, liberação, realocação etc.) é feita <strong>no espaço de usuário</strong>, por bibliotecas como <code>libc</code>, <code>jemalloc</code> ou <code>tcmalloc</code>.
+O kernel apenas garante o isolamento, proteção e paginação do espaço virtual, <strong>sem participar do gerenciamento interno</strong> dessa área.</p>
+<hr>
+<h3>2. <strong>softirq</strong>: <s>Mostra custo de tratamento de rede e tarefas assíncronas</s>.</h3>
+<p><strong>Correção</strong>:
+O campo <strong><code>softirq</code></strong> é <strong>específico para o processamento de rede</strong> e algumas rotinas críticas de baixo nível.
+O termo “tarefas assíncronas” é impreciso, pois <strong>o kernel inteiro é estruturado de forma assíncrona</strong>, com múltiplas <em>worker threads</em> internas executando operações em paralelo.</p>
+<p>Essas <em>worker threads</em> (como as do <em>kworker</em>) são entidades do kernel que <strong>processam filas de tarefas pendentes</strong> — por exemplo, limpeza de caches, escrita assíncrona em disco, ou manipulação de pacotes de rede — sem bloquear o contexto de interrupção que as gerou.
+Assim, elas permitem que o kernel <strong>delegue trabalho pesado ou demorado</strong> para execução posterior, fora do caminho crítico da interrupção, mantendo o sistema responsivo e eficiente.</p>
 
   </div>
   
