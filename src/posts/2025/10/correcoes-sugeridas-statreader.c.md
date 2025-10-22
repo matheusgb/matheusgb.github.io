@@ -4,7 +4,7 @@ date: 2025-10-22
 tags: [linguagem c, sistemas operacionais, jornada observabilidade]
 ---
 
-Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.
+Correções técnicas e explorações sobre conceitos fundamentais: diferença entre `mmap()` e `malloc()`, como worker threads funcionam no kernel, `MAP_SHARED` vs `MAP_PRIVATE`, e a relação entre ferramentas estáticas (`nm`, `objdump`) e dinâmicas (`mmap`) no ciclo de vida de programas.
 
 <!-- excerpt -->
 
