@@ -35,7 +35,7 @@
     <meta property="og:url" content="https://matheusgb.github.io/posts/2025/10/correcoes-sugeridas-statreader.c/">
     <meta property="og:title" content="Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c - matheusgb">
     <meta property="og:description" content="
-Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.
+Correções técnicas e explorações sobre conceitos fundamentais: diferença entre `mmap()` e `malloc()`, como worker threads funcionam no kernel, `MAP_SHARED` vs `MAP_PRIVATE`, e a relação entre ferramentas estáticas (`nm`, `objdump`) e dinâmicas (`mmap`) no ciclo de vida de programas.
 
 ">
     <meta property="og:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -54,7 +54,7 @@ Correções técnicas e explorações sobre conceitos fundamentais: diferença e
     <meta name="twitter:url" content="https://matheusgb.github.io/posts/2025/10/correcoes-sugeridas-statreader.c/">
     <meta name="twitter:title" content="Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c - matheusgb">
     <meta name="twitter:description" content="
-Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.
+Correções técnicas e explorações sobre conceitos fundamentais: diferença entre `mmap()` e `malloc()`, como worker threads funcionam no kernel, `MAP_SHARED` vs `MAP_PRIVATE`, e a relação entre ferramentas estáticas (`nm`, `objdump`) e dinâmicas (`mmap`) no ciclo de vida de programas.
 
 ">
     <meta name="twitter:image" content="https://matheusgb.github.io/assets/img/og-image.png">
@@ -76,7 +76,7 @@ Correções técnicas e explorações sobre conceitos fundamentais: diferença e
       "name": "Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c",
       "headline": "Mapeamento de memória, worker threads e binários ELF - correções e aprofundamentos do statreader.c",
       "description": "
-Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.
+Correções técnicas e explorações sobre conceitos fundamentais: diferença entre `mmap()` e `malloc()`, como worker threads funcionam no kernel, `MAP_SHARED` vs `MAP_PRIVATE`, e a relação entre ferramentas estáticas (`nm`, `objdump`) e dinâmicas (`mmap`) no ciclo de vida de programas.
 
 ",
       "url": "https://matheusgb.github.io/posts/2025/10/correcoes-sugeridas-statreader.c/",
@@ -323,7 +323,7 @@ Correções técnicas e explorações sobre conceitos fundamentais: diferença e
   </header>
   
   <div class="prose prose-lg dark:prose-invert" itemprop="articleBody">
-    <p>Correções técnicas e explorações sobre conceitos fundamentais: diferença entre mmap() e malloc(), como worker threads funcionam no kernel, MAP_SHARED vs MAP_PRIVATE, e a relação entre ferramentas estáticas (nm, objdump) e dinâmicas (mmap) no ciclo de vida de programas.</p>
+    <p>Correções técnicas e explorações sobre conceitos fundamentais: diferença entre <code>mmap()</code> e <code>malloc()</code>, como worker threads funcionam no kernel, <code>MAP_SHARED</code> vs <code>MAP_PRIVATE</code>, e a relação entre ferramentas estáticas (<code>nm</code>, <code>objdump</code>) e dinâmicas (<code>mmap</code>) no ciclo de vida de programas.</p>
 <hr>
 <h3>Errata sobre considerações feitas no <a href="https://matheusgb.github.io/posts/2025/10/refatorando-statreader.c/" target="_blank" rel="noopener noreferrer">post anterior</a></h3>
 <h3>1. <em>system</em>:</h3>
